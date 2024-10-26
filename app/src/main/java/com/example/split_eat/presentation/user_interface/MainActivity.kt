@@ -1,4 +1,4 @@
-package com.example.split_eat.presentation
+package com.example.split_eat.presentation.user_interface
 
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
