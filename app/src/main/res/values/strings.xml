@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">Split-Eat</string>
+    <string name="title_chats">Чаты</string>
+    <string name="title_newApplication">Создание заявки</string>
+    <string name="title_applications">Заявки</string>
 </resources>
