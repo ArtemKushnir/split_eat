@@ -23,4 +23,10 @@
         android:label="@string/title_chats"
         tools:layout="@layout/fragment_chats" />
 
+    <fragment
+        android:id="@+id/navigation_personal_account"
+        android:name="com.example.split_eat.presentation.user_interface.ui.personalAccount.PersonalAccountFragment"
+        android:label="@string/title_personalAccount"
+        tools:layout="@layout/fragment_personal_account" />
+
 </navigation>

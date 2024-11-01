@@ -3,4 +3,5 @@
     <string name="title_chats">Чаты</string>
     <string name="title_newApplication">Создание заявки</string>
     <string name="title_applications">Заявки</string>
+    <string name="title_personalAccount">Личный кабинет</string>
 </resources>
