@@ -15,8 +15,8 @@ class AuthRepositoryImpl @Inject constructor(
 ): AuthRepository{
     override suspend fun login(email: String, password: String): Boolean {
         val response = authApi.login(LoginRequest(email, password))
-        if (response.refreshToken.isNotEmpty() and response.accessToken.isNotEmpty()){
-            tokenStorage.saveTokens(response.accessToken, response.refreshToken)
+        if (response.refresh.isNotEmpty() and response.access.isNotEmpty()){
+            tokenStorage.saveTokens(response.access, response.refresh)
             return true
         }
         return false
@@ -28,13 +28,13 @@ class AuthRepositoryImpl @Inject constructor(
         password: String
     ): Boolean {
         val response = authApi.register(RegisterRequest(email, username, password))
-        return response.message == "Registration successful"
+        return response.message == "The user has been created and is waiting for email confirmation"
     }
 
     override suspend fun confirmEmail(email: String, code: String): Boolean {
         val response = authApi.confirmEmail(ConfirmEmailRequest(email, code))
-        if (response.refreshToken.isNotEmpty() and response.accessToken.isNotEmpty()){
-            tokenStorage.saveTokens(response.accessToken, response.refreshToken)
+        if (response.refresh.isNotEmpty() and response.access.isNotEmpty()){
+            tokenStorage.saveTokens(response.access, response.refresh)
             return true
         }
         return false

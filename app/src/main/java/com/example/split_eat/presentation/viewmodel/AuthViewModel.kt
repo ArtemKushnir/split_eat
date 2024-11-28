@@ -2,6 +2,7 @@ package com.example.split_eat.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.split_eat.domain.usecase.ConfirmEmailUseCase
 import com.example.split_eat.domain.usecase.LoginUseCase
 import com.example.split_eat.domain.usecase.RegisterUseCase
 import com.example.split_eat.utils.Resource
@@ -14,7 +15,8 @@ import javax.inject.Inject
 @HiltViewModel
 class AuthViewModel @Inject constructor(
     private val loginUseCase: LoginUseCase,
-    private val registerUseCase: RegisterUseCase
+    private val registerUseCase: RegisterUseCase,
+    private val confirmEmailUseCase: ConfirmEmailUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<AuthUiState>(AuthUiState.Welcome)
@@ -22,6 +24,7 @@ class AuthViewModel @Inject constructor(
 
     private val _authState = MutableStateFlow<Resource<Unit>>(Resource.Idle)
     val authState: StateFlow<Resource<Unit>> = _authState
+
 
     fun navigateToLogin() {
         _uiState.value = AuthUiState.Login
@@ -61,7 +64,7 @@ class AuthViewModel @Inject constructor(
                 try {
                     val isSuccess = registerUseCase(email, username, password)
                     if (isSuccess) {
-                        _authState.value = Resource.Success(Unit)
+                        _uiState.value = AuthUiState.ConfirmEmail(email)
                     } else {
                         _authState.value = Resource.Error("Ошибка регистрации")
                     }
@@ -71,10 +74,26 @@ class AuthViewModel @Inject constructor(
             }
         }
     }
+    fun confirmEmail(email: String, code: String) {
+        viewModelScope.launch {
+            _authState.value = Resource.Loading
+            try {
+                val isSuccess = confirmEmailUseCase(email, code)
+                if (isSuccess) {
+                    _authState.value = Resource.Success(Unit)
+                }else {
+                    _authState.value = Resource.Error("Неверный код")
+                }
+            } catch (e: Exception) {
+                _authState.value = Resource.Error(e.message ?: "Ошиюка")
+            }
+        }
+    }
 }
 
 sealed class AuthUiState {
     data object Welcome : AuthUiState()
     data object Login : AuthUiState()
     data object Register : AuthUiState()
+    data class ConfirmEmail(var email: String): AuthUiState()
 }

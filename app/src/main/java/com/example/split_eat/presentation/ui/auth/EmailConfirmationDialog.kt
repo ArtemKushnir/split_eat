@@ -24,24 +24,20 @@ import com.example.split_eat.presentation.ui.theme.Tomato
 @Composable
 fun EmailConfirmationDialog(
     email: String,
-    onConfirm: () -> Unit,
+    onConfirm: (String, String) -> Unit,
     onDismiss: () -> Unit
 ) {
     var code by remember { mutableStateOf("") }
     AlertDialog(
-        onDismissRequest = { onDismiss() }, // Закрытие при клике вне окна
-        title = {
-            Text(text = "Подтверждение почты")
-        },
+        onDismissRequest = { onDismiss() },
+        title = { Text(text = "Подтверждение почты") },
         text = {
             Column {
-                Text(
-                    text = "Мы отправили код подтверждения на $email. Введите его ниже:",
-                )
+                Text(text = "Мы отправили код подтверждения на $email. Введите его ниже:")
                 Spacer(modifier = Modifier.height(8.dp))
                 OutlinedTextField(
-                    value = code, // Состояние поля ввода
-                    onValueChange = { code = it }, // Обновление состояния
+                    value = code,
+                    onValueChange = { code = it },
                     label = { Text("Код подтверждения") },
                     placeholder = { Text("Введите код") },
                     singleLine = true,
@@ -51,7 +47,7 @@ fun EmailConfirmationDialog(
         },
         confirmButton = {
             Button(
-                onClick = onConfirm,
+                onClick = { onConfirm(email, code) },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Tomato,
                     contentColor = Color.Black
@@ -74,9 +70,10 @@ fun EmailConfirmationDialog(
     )
 }
 
+
 @Preview(showBackground = true)
 @Composable
 fun EmailConfirmWindowPreview() {
-    EmailConfirmationDialog(email = "admin@example.com", onConfirm = { }) {
+    EmailConfirmationDialog(email = "admin@example.com", onConfirm = {email, code-> Unit }) {
     }
 }
