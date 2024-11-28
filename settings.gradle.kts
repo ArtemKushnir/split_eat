@@ -21,4 +21,3 @@ dependencyResolutionManagement {
 
 rootProject.name = "Split-Eat"
 include(":app")
- 
