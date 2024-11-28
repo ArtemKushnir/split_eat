@@ -8,6 +8,7 @@ import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import com.example.split_eat.presentation.ui.auth.EmailConfirmationDialog
 import com.example.split_eat.utils.Resource
 import com.example.split_eat.presentation.ui.auth.LoginScreen
 import com.example.split_eat.presentation.ui.auth.RegisterScreen
@@ -31,13 +32,20 @@ class MainActivity : ComponentActivity() {
                 is AuthUiState.Welcome -> GreetingScreen()
                 is AuthUiState.Login -> LoginScreen()
                 is AuthUiState.Register -> RegisterScreen()
+                is AuthUiState.ConfirmEmail -> {
+                    EmailConfirmationDialog(
+                        email = uiState.email,
+                        onConfirm = {
+                            email, code -> authViewModel.confirmEmail(email, code)
+                        },
+                        onDismiss = {
+                            authViewModel.navigateToRegister()
+                        })
+                }
             }
 
             LaunchedEffect(authState) {
                 when (authState) {
-                    is Resource.Loading -> {
-                        // Покажите индикатор загрузки, если необходимо
-                    }
                     is Resource.Success -> {
                         Toast.makeText(applicationContext, "Успех", Toast.LENGTH_SHORT).show()
                     }
