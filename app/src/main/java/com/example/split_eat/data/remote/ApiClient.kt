@@ -8,7 +8,7 @@ import javax.inject.Inject
 
 class ApiClient @Inject constructor() {
 
-    private val BASE_URL = "http://127.0.0.1:8000/"
+    private val BASE_URL = "http://10.0.2.2:8000/"
 
     private val okHttpClient = OkHttpClient.Builder()
         .addInterceptor(HttpLoggingInterceptor().apply {
