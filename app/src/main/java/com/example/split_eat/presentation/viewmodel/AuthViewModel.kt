@@ -2,6 +2,7 @@ package com.example.split_eat.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.split_eat.domain.models.ApiResult
 import com.example.split_eat.domain.usecase.ConfirmEmailUseCase
 import com.example.split_eat.domain.usecase.LoginUseCase
 import com.example.split_eat.domain.usecase.RegisterUseCase
@@ -42,11 +43,9 @@ class AuthViewModel @Inject constructor(
         viewModelScope.launch {
             _authState.value = Resource.Loading
             try {
-                val isSuccess = loginUseCase(email, password)
-                if (isSuccess) {
-                    _authState.value = Resource.Success(Unit)
-                } else {
-                    _authState.value = Resource.Error("Неверные данные для входа")
+                when (val response = loginUseCase(email, password)) {
+                    is ApiResult.Success -> _authState.value = Resource.Success(Unit)
+                    is ApiResult.Error -> _authState.value = Resource.Error(response.message)
                 }
             } catch (e: Exception) {
                 _authState.value = Resource.Error(e.message ?: "Ошибка входа")
@@ -57,20 +56,14 @@ class AuthViewModel @Inject constructor(
     fun register(email: String, username: String, password: String, confirmPassword: String) {
         viewModelScope.launch {
             _authState.value = Resource.Loading
-            if (password != confirmPassword){
-                _authState.value = Resource.Error("Пароли не совпадают")
-            }
-            else {
-                try {
-                    val isSuccess = registerUseCase(email, username, password)
-                    if (isSuccess) {
-                        _uiState.value = AuthUiState.ConfirmEmail(email)
-                    } else {
-                        _authState.value = Resource.Error("Ошибка регистрации")
-                    }
-                } catch (e: Exception) {
-                    _authState.value = Resource.Error(e.message ?: "Ошибка регистрации")
+            try {
+                when (val response = registerUseCase(email, username, password, confirmPassword)) {
+                    is ApiResult.Success -> _uiState.value = AuthUiState.ConfirmEmail(email)
+                    is ApiResult.Error -> _authState.value = Resource.Error(response.message)
                 }
+            } catch (e: Exception) {
+                _authState.value = Resource.Error(e.message ?: "Ошибка регистрации")
+
             }
         }
     }
@@ -78,14 +71,12 @@ class AuthViewModel @Inject constructor(
         viewModelScope.launch {
             _authState.value = Resource.Loading
             try {
-                val isSuccess = confirmEmailUseCase(email, code)
-                if (isSuccess) {
-                    _authState.value = Resource.Success(Unit)
-                }else {
-                    _authState.value = Resource.Error("Неверный код")
+                when (val response = confirmEmailUseCase(email, code)) {
+                    is ApiResult.Success -> _authState.value = Resource.Success(Unit)
+                    is ApiResult.Error -> _authState.value = Resource.Error(response.message)
                 }
             } catch (e: Exception) {
-                _authState.value = Resource.Error(e.message ?: "Ошиюка")
+                _authState.value = Resource.Error(e.message ?: "Ошибка")
             }
         }
     }
