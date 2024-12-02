@@ -147,8 +147,8 @@ fun LoginButton(navController: NavController, email: String, password: String){
     LaunchedEffect(Unit) {
         authViewModel.navigationEvent.collect { destination ->
             navController.navigate(destination)
+            }
         }
-    }
 
     LaunchedEffect(Unit) {
         authViewModel.messageEvent.collect { message ->

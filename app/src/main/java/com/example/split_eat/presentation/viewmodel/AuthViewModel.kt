@@ -7,7 +7,7 @@ import com.example.split_eat.domain.models.ApiResult
 import com.example.split_eat.domain.usecase.ConfirmEmailUseCase
 import com.example.split_eat.domain.usecase.LoginUseCase
 import com.example.split_eat.domain.usecase.RegisterUseCase
-import com.example.split_eat.utils.Resource
+import com.example.split_eat.utils.AuthUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -34,7 +34,7 @@ class AuthViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 when (val response = loginUseCase(email, password)) {
-                    is ApiResult.Success -> _navigationEvent.emit("after_auth")
+                    is ApiResult.Success -> _navigationEvent.emit(AuthUiState.MAIN_CONTENT.name)
                     is ApiResult.Error -> _messageEvent.emit(response.message)
                 }
             } catch (e: Exception) {
@@ -47,7 +47,7 @@ class AuthViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 when (val response = registerUseCase(email, username, password, confirmPassword)) {
-                    is ApiResult.Success -> _navigationEvent.emit("confirm_email/$email")
+                    is ApiResult.Success -> _navigationEvent.emit(AuthUiState.CONFIRM_EMAIL.name + "/$email")
                     is ApiResult.Error -> _messageEvent.emit(response.message)
                 }
             } catch (e: Exception) {
@@ -60,7 +60,7 @@ class AuthViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 when (val response = confirmEmailUseCase(email, code)) {
-                    is ApiResult.Success -> _navigationEvent.emit("after_auth")
+                    is ApiResult.Success -> _navigationEvent.emit(AuthUiState.MAIN_CONTENT.name)
                     is ApiResult.Error -> _messageEvent.emit(response.message)
                 }
             } catch (e: Exception) {
@@ -70,9 +70,5 @@ class AuthViewModel @Inject constructor(
     }
 }
 
-//sealed class AuthUiState {
-//    data object Welcome : AuthUiState()
-//    data object Login : AuthUiState()
-//    data object Register : AuthUiState()
-//    data class ConfirmEmail(var email: String): AuthUiState()
-//}
+
+

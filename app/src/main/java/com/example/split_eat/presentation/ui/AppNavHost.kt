@@ -1,4 +1,4 @@
-package com.example.split_eat.presentation.ui.auth
+package com.example.split_eat.presentation.ui
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
@@ -7,7 +7,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.split_eat.presentation.ui.AfterAuth
+import com.example.split_eat.presentation.ui.auth.EmailConfirmationDialog
+import com.example.split_eat.presentation.ui.auth.GreetingScreen
+import com.example.split_eat.presentation.ui.auth.LoginScreen
+import com.example.split_eat.presentation.ui.auth.RegisterScreen
+import com.example.split_eat.presentation.ui.main.AfterAuth
 
 @Composable
 fun AppNavHost() {
@@ -25,13 +29,12 @@ fun AppNavHost() {
         composable(
             "confirm_email/{email}",
             arguments = listOf(navArgument("email") { type = NavType.StringType})
-            ) { backStackEntry ->
-            val email = backStackEntry.arguments?.getString("email")
+            ) { backStackEntry -> val email = backStackEntry.arguments?.getString("email")
             if (email != null) {
                 EmailConfirmationDialog(email = email, navController)
             }
         }
-        composable("after_auth") {
+        composable("main_content") {
             AfterAuth()
         }
     }
