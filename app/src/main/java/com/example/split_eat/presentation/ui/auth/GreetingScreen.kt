@@ -25,15 +25,14 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.example.split_eat.R
 import com.example.split_eat.presentation.ui.theme.Tomato
 import com.example.split_eat.presentation.viewmodel.AuthViewModel
 
 
 @Composable
-fun GreetingScreen() {
-    val authViewModel: AuthViewModel = viewModel()
+fun GreetingScreen(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -42,8 +41,8 @@ fun GreetingScreen() {
     ){
         LogoImage()
         GreetingText()
-        RegistrationButton(authViewModel)
-        LoginText(authViewModel)
+        RegistrationButton(navController)
+        LoginText(navController)
 
     }
 }
@@ -77,10 +76,10 @@ fun GreetingText(){
 }
 
 @Composable
-fun RegistrationButton(authViewModel: AuthViewModel){
+fun RegistrationButton(navController: NavController) {
     CustomButton(
         text = "Зарегистрироваться",
-        onClick = {authViewModel.navigateToRegister()},
+        onClick = { navController.navigate("register") },
         modifier = Modifier
             .width(300.dp)
             .height(60.dp),
@@ -92,7 +91,7 @@ fun RegistrationButton(authViewModel: AuthViewModel){
 }
 
 @Composable
-fun LoginText(authViewModel: AuthViewModel){
+fun LoginText(navController: NavController){
     Row {
         Text(
             text = "Уже есть аккаунт? ",
@@ -104,15 +103,15 @@ fun LoginText(authViewModel: AuthViewModel){
             color = Tomato,
             fontWeight = FontWeight.Medium,
             modifier = Modifier
-                .clickable(onClick = {authViewModel.navigateToLogin()})
+                .clickable(onClick = { navController.navigate("login") })
                 .padding(top=5.dp)
         )
     }
 }
 
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingScreenPreview() {
-    GreetingScreen()
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun GreetingScreenPreview() {
+//    GreetingScreen()
+//}
