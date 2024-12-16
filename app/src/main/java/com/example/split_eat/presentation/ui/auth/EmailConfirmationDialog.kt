@@ -23,20 +23,19 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import com.example.split_eat.presentation.ui.theme.Tomato
 import com.example.split_eat.presentation.viewmodel.AuthViewModel
 
 @Composable
 fun EmailConfirmationDialog(
-    email: String, navController: NavController
+    email: String, onNavigate: () -> Unit, onPopBack: () -> Unit
 ) {
     val authViewModel: AuthViewModel = hiltViewModel()
     val context = LocalContext.current
 
-    LaunchedEffect(Unit) {
-        authViewModel.navigationEvent.collect { destination ->
-            navController.navigate(destination)
+    LaunchedEffect(authViewModel.isLoggedIn.value) {
+        if (authViewModel.isLoggedIn.value) {
+            onNavigate()
         }
     }
 
@@ -76,7 +75,7 @@ fun EmailConfirmationDialog(
         },
         dismissButton = {
             TextButton(
-                onClick = { navController.popBackStack() },
+                onClick = { onPopBack() },
                 colors = ButtonDefaults.buttonColors(
                     contentColor = Color.Black,
                     containerColor = Color.Gray
@@ -86,4 +85,10 @@ fun EmailConfirmationDialog(
             }
         }
     )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ConfirmEmailPreview() {
+    EmailConfirmationDialog("email", {println("main")}, { println("pop_back") })
 }

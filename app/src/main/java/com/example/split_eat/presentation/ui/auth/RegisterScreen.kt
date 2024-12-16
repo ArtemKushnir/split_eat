@@ -24,7 +24,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,19 +34,18 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import com.example.split_eat.presentation.ui.theme.Tomato
 import com.example.split_eat.presentation.viewmodel.AuthViewModel
 
 @Composable
-fun RegisterScreen(navController: NavController) {
+fun RegisterScreen(onNavigate: (String) -> Unit, onPopBack: () -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
     ) {
         IconButton(
-            onClick = { navController.popBackStack() },
+            onClick = { onPopBack() },
             modifier = Modifier.align(Alignment.TopStart)
         ) {
             Icon(
@@ -61,13 +59,13 @@ fun RegisterScreen(navController: NavController) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             LogoText()
-            RegisterCard(navController)
+            RegisterCard(onNavigate)
         }
     }
 }
 
 @Composable
-fun RegisterCard(navController: NavController) {
+fun RegisterCard(onNavigate: (String) -> Unit) {
     var email by remember { mutableStateOf("") }
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -95,7 +93,7 @@ fun RegisterCard(navController: NavController) {
             PasswordTextField(password = password, onPasswordChange = { password = it })
             Text(text = "Подтвердите пароль", fontWeight = FontWeight.Bold, modifier = Modifier.padding(top = 5.dp))
             ConfirmPasswordTextField(confirmPassword = confirmPassword, onConfirmPasswordChange = {confirmPassword = it})
-            RegisterButton(navController, email, username, password, confirmPassword)
+            RegisterButton(onNavigate, email, username, password, confirmPassword)
         }
 
     }
@@ -103,13 +101,13 @@ fun RegisterCard(navController: NavController) {
 
 
 @Composable
-fun RegisterButton(navController: NavController, email: String, username: String, password:String, confirmPassword: String){
+fun RegisterButton(onNavigate: (String) -> Unit, email: String, username: String, password:String, confirmPassword: String){
     val authViewModel: AuthViewModel = hiltViewModel()
     val context = LocalContext.current
 
-    LaunchedEffect(Unit) {
-        authViewModel.navigationEvent.collect { destination ->
-            navController.navigate(destination)
+    LaunchedEffect(authViewModel.isConfirmEmail.value) {
+        if (authViewModel.isConfirmEmail.value) {
+            onNavigate(email)
         }
     }
 
@@ -154,8 +152,8 @@ fun ConfirmPasswordTextField(confirmPassword: String, onConfirmPasswordChange: (
         modifier = Modifier.padding(top = 8.dp))
 }
 
-//@Preview(showBackground = true)
-//@Composable
-//fun RegisterScreenPreview() {
-//    RegisterScreen()
-//}
+@Preview(showBackground = true)
+@Composable
+fun RegisterScreenPreview() {
+    RegisterScreen({println("confirm_email")}, { println("pop_back") })
+}

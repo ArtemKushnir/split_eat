@@ -25,14 +25,12 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import com.example.split_eat.R
 import com.example.split_eat.presentation.ui.theme.Tomato
-import com.example.split_eat.presentation.viewmodel.AuthViewModel
 
 
 @Composable
-fun GreetingScreen(navController: NavController) {
+fun GreetingScreen(onNavigateLogin: () -> Unit, onNavigateRegister: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -41,8 +39,8 @@ fun GreetingScreen(navController: NavController) {
     ){
         LogoImage()
         GreetingText()
-        RegistrationButton(navController)
-        LoginText(navController)
+        RegistrationButton(onNavigateRegister)
+        LoginText(onNavigateLogin)
 
     }
 }
@@ -76,10 +74,10 @@ fun GreetingText(){
 }
 
 @Composable
-fun RegistrationButton(navController: NavController) {
+fun RegistrationButton(onNavigateRegister: () -> Unit) {
     CustomButton(
         text = "Зарегистрироваться",
-        onClick = { navController.navigate("register") },
+        onClick = { onNavigateRegister() },
         modifier = Modifier
             .width(300.dp)
             .height(60.dp),
@@ -91,7 +89,7 @@ fun RegistrationButton(navController: NavController) {
 }
 
 @Composable
-fun LoginText(navController: NavController){
+fun LoginText(onNavigateLogin: () -> Unit){
     Row {
         Text(
             text = "Уже есть аккаунт? ",
@@ -103,15 +101,15 @@ fun LoginText(navController: NavController){
             color = Tomato,
             fontWeight = FontWeight.Medium,
             modifier = Modifier
-                .clickable(onClick = { navController.navigate("login") })
+                .clickable(onClick = { onNavigateLogin() })
                 .padding(top=5.dp)
         )
     }
 }
 
 
-//@Preview(showBackground = true)
-//@Composable
-//fun GreetingScreenPreview() {
-//    GreetingScreen()
-//}
+@Preview(showBackground = true)
+@Composable
+fun GreetingScreenPreview() {
+    GreetingScreen({ println("login") }, { println("register") })
+}

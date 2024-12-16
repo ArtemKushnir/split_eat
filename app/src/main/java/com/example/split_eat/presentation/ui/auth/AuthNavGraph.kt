@@ -1,37 +1,48 @@
 package com.example.split_eat.presentation.ui.auth
 
-import androidx.compose.runtime.Composable
-import androidx.navigation.NavHostController
+import androidx.navigation.NavController
+import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
-import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.split_eat.presentation.ui.main.AfterAuth
+import androidx.navigation.navigation
 
-@Composable
-fun AuthNavGraph() {
-    val navController: NavHostController = rememberNavController()
-    NavHost(navController = navController, startDestination = "greeting") {
-        composable("greeting") {
-            GreetingScreen(navController)
+fun NavGraphBuilder.authGraph(navController: NavController) {
+    navigation(startDestination = "auth/greeting", route = "auth") {
+        composable("auth/greeting") {
+            GreetingScreen(
+                onNavigateLogin = {navController.navigate("auth/login")},
+                onNavigateRegister = {navController.navigate("auth/register")}
+            )
         }
-        composable("login") {
-            LoginScreen(navController)
+        composable("auth/login") {
+            LoginScreen(
+                onPopBack = {navController.popBackStack()},
+                onLogin = {navController.navigate("main") {
+                    popUpTo("auth") { inclusive = true } }
+                }
+            )
         }
-        composable("register") {
-            RegisterScreen(navController)
+        composable("auth/register") {
+            RegisterScreen(
+                onPopBack = {navController.popBackStack()},
+                onNavigate = { email: String -> navController.navigate("auth/confirm_email/$email")}
+                )
         }
         composable(
-            "confirm_email/{email}",
-            arguments = listOf(navArgument("email") { type = NavType.StringType})
-            ) { backStackEntry -> val email = backStackEntry.arguments?.getString("email")
+            "auth/confirm_email/{email}",
+            arguments = listOf(navArgument("email") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val email = backStackEntry.arguments?.getString("email")
             if (email != null) {
-                EmailConfirmationDialog(email = email, navController)
+                EmailConfirmationDialog(
+                    email = email,
+                    onNavigate = {navController.navigate("main") {
+                        popUpTo("auth") { inclusive = true }
+                    } },
+                    onPopBack = { navController.popBackStack() }
+                )
             }
-        }
-        composable("main_content") {
-            AfterAuth()
         }
     }
 }

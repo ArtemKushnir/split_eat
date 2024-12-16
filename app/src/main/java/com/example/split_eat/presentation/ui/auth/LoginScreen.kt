@@ -24,7 +24,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -38,20 +37,20 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import com.example.split_eat.presentation.viewmodel.AuthViewModel
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
 
 
 @Composable
-fun LoginScreen(navController: NavController) {
+fun LoginScreen(onPopBack: () -> Unit, onLogin: () -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
     ) {
         IconButton(
-            onClick = { navController.popBackStack() },
+            onClick = { onPopBack() },
             modifier = Modifier.align(Alignment.TopStart)
         ) {
             Icon(
@@ -65,7 +64,7 @@ fun LoginScreen(navController: NavController) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             LogoText()
-            LoginCard(navController)
+            LoginCard(onLogin)
         }
     }
 }
@@ -85,7 +84,7 @@ fun LogoText(){
 }
 
 @Composable
-fun LoginCard(navController: NavController) {
+fun LoginCard(onLogin: () -> Unit) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     Card(
@@ -107,7 +106,7 @@ fun LoginCard(navController: NavController) {
                 EmailTextField(email = email, onEmailChange = { email = it })
             Text(text = "Пароль", fontWeight = FontWeight.Bold, modifier = Modifier.padding(bottom = 8.dp))
             PasswordTextField(password = password, onPasswordChange = { password = it })
-            LoginButton(navController, email, password)
+            LoginButton(onLogin, email, password)
         }
 
     }
@@ -139,16 +138,16 @@ fun PasswordTextField(password: String, onPasswordChange: (String) -> Unit){
 
 
 @Composable
-fun LoginButton(navController: NavController, email: String, password: String){
+fun LoginButton(onLogin: () -> Unit, email: String, password: String){
     val authViewModel: AuthViewModel = hiltViewModel()
     val context = LocalContext.current
 
 
-    LaunchedEffect(Unit) {
-        authViewModel.navigationEvent.collect { destination ->
-            navController.navigate(destination)
-            }
+    LaunchedEffect(authViewModel.isLoggedIn.value) {
+        if (authViewModel.isLoggedIn.value) {
+            onLogin()
         }
+    }
 
     LaunchedEffect(Unit) {
         authViewModel.messageEvent.collect { message ->
@@ -190,8 +189,8 @@ fun CustomButton(
 }
 
 
-//@Preview(showBackground = true)
-//@Composable
-//fun LoginScreenPreview() {
-//    LoginScreen()
-//}
+@Preview(showBackground = true)
+@Composable
+fun LoginScreenPreview() {
+    LoginScreen({ println("pop_back")}, { println("main")})
+}
