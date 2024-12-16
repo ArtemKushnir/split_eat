@@ -1,6 +1,5 @@
 package com.example.split_eat.data.repository
 
-import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import com.example.split_eat.data.local.TokenStorage
 import com.example.split_eat.data.remote.AuthApi
 import com.example.split_eat.data.model.ConfirmEmailRequest

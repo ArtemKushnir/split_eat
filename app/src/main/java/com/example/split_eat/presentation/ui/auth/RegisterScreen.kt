@@ -1,5 +1,6 @@
 package com.example.split_eat.presentation.ui.auth
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -19,6 +20,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -26,24 +28,24 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.split_eat.presentation.ui.theme.Tomato
 import com.example.split_eat.presentation.viewmodel.AuthViewModel
 
 @Composable
-fun RegisterScreen() {
-    val authViewModel: AuthViewModel = viewModel()
+fun RegisterScreen(onNavigate: (String) -> Unit, onPopBack: () -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
     ) {
         IconButton(
-            onClick = {authViewModel.navigateToWelcome()},
+            onClick = { onPopBack() },
             modifier = Modifier.align(Alignment.TopStart)
         ) {
             Icon(
@@ -57,13 +59,13 @@ fun RegisterScreen() {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             LogoText()
-            RegisterCard(authViewModel)
+            RegisterCard(onNavigate)
         }
     }
 }
 
 @Composable
-fun RegisterCard(authViewModel: AuthViewModel) {
+fun RegisterCard(onNavigate: (String) -> Unit) {
     var email by remember { mutableStateOf("") }
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -91,7 +93,7 @@ fun RegisterCard(authViewModel: AuthViewModel) {
             PasswordTextField(password = password, onPasswordChange = { password = it })
             Text(text = "Подтвердите пароль", fontWeight = FontWeight.Bold, modifier = Modifier.padding(top = 5.dp))
             ConfirmPasswordTextField(confirmPassword = confirmPassword, onConfirmPasswordChange = {confirmPassword = it})
-            RegisterButton(authViewModel, email, username, password, confirmPassword)
+            RegisterButton(onNavigate, email, username, password, confirmPassword)
         }
 
     }
@@ -99,7 +101,22 @@ fun RegisterCard(authViewModel: AuthViewModel) {
 
 
 @Composable
-fun RegisterButton(authViewModel: AuthViewModel, email: String, username: String, password:String, confirmPassword: String){
+fun RegisterButton(onNavigate: (String) -> Unit, email: String, username: String, password:String, confirmPassword: String){
+    val authViewModel: AuthViewModel = hiltViewModel()
+    val context = LocalContext.current
+
+    LaunchedEffect(authViewModel.isConfirmEmail.value) {
+        if (authViewModel.isConfirmEmail.value) {
+            onNavigate(email)
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        authViewModel.messageEvent.collect {
+            message -> Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+        }
+    }
+
     CustomButton(
         text = "Зарегистрироваться",
         onClick = {authViewModel.register(email, username, password, confirmPassword)},
@@ -138,5 +155,5 @@ fun ConfirmPasswordTextField(confirmPassword: String, onConfirmPasswordChange: (
 @Preview(showBackground = true)
 @Composable
 fun RegisterScreenPreview() {
-    RegisterScreen()
+    RegisterScreen({println("confirm_email")}, { println("pop_back") })
 }

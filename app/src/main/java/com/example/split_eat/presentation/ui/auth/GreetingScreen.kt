@@ -25,15 +25,12 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.split_eat.R
 import com.example.split_eat.presentation.ui.theme.Tomato
-import com.example.split_eat.presentation.viewmodel.AuthViewModel
 
 
 @Composable
-fun GreetingScreen() {
-    val authViewModel: AuthViewModel = viewModel()
+fun GreetingScreen(onNavigateLogin: () -> Unit, onNavigateRegister: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -42,8 +39,8 @@ fun GreetingScreen() {
     ){
         LogoImage()
         GreetingText()
-        RegistrationButton(authViewModel)
-        LoginText(authViewModel)
+        RegistrationButton(onNavigateRegister)
+        LoginText(onNavigateLogin)
 
     }
 }
@@ -77,10 +74,10 @@ fun GreetingText(){
 }
 
 @Composable
-fun RegistrationButton(authViewModel: AuthViewModel){
+fun RegistrationButton(onNavigateRegister: () -> Unit) {
     CustomButton(
         text = "Зарегистрироваться",
-        onClick = {authViewModel.navigateToRegister()},
+        onClick = { onNavigateRegister() },
         modifier = Modifier
             .width(300.dp)
             .height(60.dp),
@@ -92,7 +89,7 @@ fun RegistrationButton(authViewModel: AuthViewModel){
 }
 
 @Composable
-fun LoginText(authViewModel: AuthViewModel){
+fun LoginText(onNavigateLogin: () -> Unit){
     Row {
         Text(
             text = "Уже есть аккаунт? ",
@@ -104,7 +101,7 @@ fun LoginText(authViewModel: AuthViewModel){
             color = Tomato,
             fontWeight = FontWeight.Medium,
             modifier = Modifier
-                .clickable(onClick = {authViewModel.navigateToLogin()})
+                .clickable(onClick = { onNavigateLogin() })
                 .padding(top=5.dp)
         )
     }
@@ -114,5 +111,5 @@ fun LoginText(authViewModel: AuthViewModel){
 @Preview(showBackground = true)
 @Composable
 fun GreetingScreenPreview() {
-    GreetingScreen()
+    GreetingScreen({ println("login") }, { println("register") })
 }

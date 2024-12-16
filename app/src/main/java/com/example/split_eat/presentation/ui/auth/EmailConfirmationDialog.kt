@@ -1,5 +1,6 @@
 package com.example.split_eat.presentation.ui.auth
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,25 +12,41 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.split_eat.presentation.ui.theme.Tomato
+import com.example.split_eat.presentation.viewmodel.AuthViewModel
 
 @Composable
 fun EmailConfirmationDialog(
-    email: String,
-    onConfirm: (String, String) -> Unit,
-    onDismiss: () -> Unit
+    email: String, onNavigate: () -> Unit, onPopBack: () -> Unit
 ) {
+    val authViewModel: AuthViewModel = hiltViewModel()
+    val context = LocalContext.current
+
+    LaunchedEffect(authViewModel.isLoggedIn.value) {
+        if (authViewModel.isLoggedIn.value) {
+            onNavigate()
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        authViewModel.messageEvent.collect {
+                message -> Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+        }
+    }
     var code by remember { mutableStateOf("") }
     AlertDialog(
-        onDismissRequest = { onDismiss() },
+        onDismissRequest = { },
         title = { Text(text = "Подтверждение почты") },
         text = {
             Column {
@@ -47,7 +64,7 @@ fun EmailConfirmationDialog(
         },
         confirmButton = {
             Button(
-                onClick = { onConfirm(email, code) },
+                onClick = { authViewModel.confirmEmail(email, code) },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Tomato,
                     contentColor = Color.Black
@@ -58,7 +75,7 @@ fun EmailConfirmationDialog(
         },
         dismissButton = {
             TextButton(
-                onClick = onDismiss,
+                onClick = { onPopBack() },
                 colors = ButtonDefaults.buttonColors(
                     contentColor = Color.Black,
                     containerColor = Color.Gray
@@ -70,10 +87,8 @@ fun EmailConfirmationDialog(
     )
 }
 
-
 @Preview(showBackground = true)
 @Composable
-fun EmailConfirmWindowPreview() {
-    EmailConfirmationDialog(email = "admin@example.com", onConfirm = {email, code-> Unit }) {
-    }
+fun ConfirmEmailPreview() {
+    EmailConfirmationDialog("email", {println("main")}, { println("pop_back") })
 }
