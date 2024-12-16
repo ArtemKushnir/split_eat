@@ -1,4 +1,4 @@
-package com.example.split_eat.presentation.ui
+package com.example.split_eat.presentation.ui.auth
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
@@ -7,14 +7,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.split_eat.presentation.ui.auth.EmailConfirmationDialog
-import com.example.split_eat.presentation.ui.auth.GreetingScreen
-import com.example.split_eat.presentation.ui.auth.LoginScreen
-import com.example.split_eat.presentation.ui.auth.RegisterScreen
 import com.example.split_eat.presentation.ui.main.AfterAuth
 
 @Composable
-fun AppNavHost() {
+fun AuthNavGraph() {
     val navController: NavHostController = rememberNavController()
     NavHost(navController = navController, startDestination = "greeting") {
         composable("greeting") {

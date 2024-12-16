@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "com.example.split_eat"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.example.split_eat"
