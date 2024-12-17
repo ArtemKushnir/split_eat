@@ -1,8 +1,11 @@
 package com.example.split_eat.presentation.ui.main
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -30,16 +33,22 @@ fun MainScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(title) },
+                modifier = Modifier,
+                title = { Text(title, Modifier.padding(start = 20.dp)) },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = Tomato
                 ),
                 actions = {
-                    IconButton(onClick = { onNavProfile() }) {
+                    IconButton(
+                        modifier = Modifier.padding(end = 20.dp),
+                        onClick = { onNavProfile() }
+                    ) {
                         Icon(
                             Icons.Filled.Person,
                             contentDescription = "Navigate to profile",
-                            modifier = Modifier.size(40.dp))
+                            modifier = Modifier
+                                .size(40.dp)
+                        )
                     }
                 }
             )
