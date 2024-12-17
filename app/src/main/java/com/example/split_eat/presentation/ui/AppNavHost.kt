@@ -6,6 +6,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.split_eat.presentation.ui.auth.authGraph
 import com.example.split_eat.presentation.ui.main.mainGraph
+import com.example.split_eat.presentation.ui.profile.profileGraph
 
 @Composable
 fun AppNavHost(navController: NavHostController = rememberNavController()) {
@@ -13,6 +14,8 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
         authGraph(navController)
 
         mainGraph(navController)
+
+        profileGraph(navController)
     }
 }
 
