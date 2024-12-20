@@ -2,10 +2,10 @@ package com.example.split_eat.data.repository
 
 import com.example.split_eat.data.local.TokenStorage
 import com.example.split_eat.data.remote.AuthApi
-import com.example.split_eat.data.model.ConfirmEmailRequest
-import com.example.split_eat.data.model.LoginRequest
-import com.example.split_eat.data.model.RegisterRequest
-import com.example.split_eat.data.model.UpdateAccessTokenRequest
+import com.example.split_eat.data.model.auth.ConfirmEmailRequest
+import com.example.split_eat.data.model.auth.LoginRequest
+import com.example.split_eat.data.model.auth.RegisterRequest
+import com.example.split_eat.data.model.auth.UpdateAccessTokenRequest
 import com.example.split_eat.domain.models.ApiResult
 import com.example.split_eat.domain.repository.AuthRepository
 import javax.inject.Inject

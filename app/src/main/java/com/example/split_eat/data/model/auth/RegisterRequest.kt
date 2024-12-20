@@ -1,4 +1,4 @@
-package com.example.split_eat.data.model
+package com.example.split_eat.data.model.auth
 
 data class RegisterRequest (
     val email: String,
