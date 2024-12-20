@@ -1,12 +1,12 @@
 package com.example.split_eat.data.remote
 
-import com.example.split_eat.data.model.ConfirmEmailRequest
-import com.example.split_eat.data.model.LoginRequest
-import com.example.split_eat.data.model.UpdateAccessTokenRequest
-import com.example.split_eat.data.model.RegisterRequest
-import com.example.split_eat.data.model.RegisterResponse
-import com.example.split_eat.data.model.TokenResponse
-import com.example.split_eat.data.model.UpdateAccessTokenResponse
+import com.example.split_eat.data.model.auth.ConfirmEmailRequest
+import com.example.split_eat.data.model.auth.LoginRequest
+import com.example.split_eat.data.model.auth.UpdateAccessTokenRequest
+import com.example.split_eat.data.model.auth.RegisterRequest
+import com.example.split_eat.data.model.auth.RegisterResponse
+import com.example.split_eat.data.model.auth.TokenResponse
+import com.example.split_eat.data.model.auth.UpdateAccessTokenResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.POST

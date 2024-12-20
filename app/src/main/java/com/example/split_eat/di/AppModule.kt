@@ -1,7 +1,9 @@
 package com.example.split_eat.di
 
 import com.example.split_eat.data.repository.AuthRepositoryImpl
+import com.example.split_eat.data.repository.RestaurantRepositoryImpl
 import com.example.split_eat.domain.repository.AuthRepository
+import com.example.split_eat.domain.repository.RestaurantRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -14,7 +16,12 @@ abstract class AppModule {
 
     @Binds
     @Singleton
-    abstract fun bindUserRepository(
-        userRepositoryImpl: AuthRepositoryImpl
+    abstract fun bindAuthRepository(
+        authRepositoryImpl: AuthRepositoryImpl
     ): AuthRepository
+    @Binds
+    @Singleton
+    abstract fun bindRestaurantRepository(
+        restaurantRepositoryImpl: RestaurantRepositoryImpl
+    ): RestaurantRepository
 }

@@ -2,7 +2,9 @@ package com.example.split_eat.presentation.ui.main
 
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavType
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import androidx.navigation.navigation
 
 fun NavGraphBuilder.mainGraph(navController: NavController) {
@@ -26,8 +28,17 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
                 onNavCart = onNavCart,
                 onNavRestaurant = onNavRestaurant,
                 currentRoute = "main/restaurant",
-                title = "Рестораны"
+                title = "Рестораны",
+                navController = navController
             )
+        }
+        composable("product/{restaurantName}") { backStackEntry ->
+            backStackEntry.arguments?.getString("restaurantName")
+                ?.let { ProductScreen(
+                    restaurantName = it,
+                    onBackStack = {navController.popBackStack()},
+                    onNavCart = { navController.navigate("main/shopping_cart") },
+                    )}
         }
         composable("main/shopping_cart") {
             MainScreen(
@@ -35,7 +46,7 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
                 onNavCart = onNavCart,
                 onNavRestaurant = onNavRestaurant,
                 currentRoute = "main/shopping_cart",
-                title = "Корзина"
+                title = "Корзина",
             )
         }
     }
