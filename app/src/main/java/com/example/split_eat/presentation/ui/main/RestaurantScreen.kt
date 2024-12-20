@@ -2,6 +2,7 @@ package com.example.split_eat.presentation.ui.main
 
 import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -35,7 +36,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -48,10 +48,11 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.navigation.NavController
 
 
 @Composable
-fun RestaurantScreen() {
+fun RestaurantScreen(navController: NavController) {
     val restaurantViewModel: RestaurantViewModel = hiltViewModel()
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
@@ -169,7 +170,7 @@ fun RestaurantScreen() {
         }
 
         items(restaurants) { restaurant ->
-            RestaurantItem(restaurant = restaurant)
+            RestaurantItem(restaurant = restaurant, navController = navController)
             Spacer(modifier = Modifier.height(10.dp))
         }
 
@@ -186,7 +187,7 @@ fun RestaurantScreen() {
 }
 
 @Composable
-fun RestaurantItem(restaurant: Restaurant) {
+fun RestaurantItem(restaurant: Restaurant, navController: NavController) {
     HorizontalDivider(
         modifier = Modifier
             .fillMaxWidth(),
@@ -199,6 +200,7 @@ fun RestaurantItem(restaurant: Restaurant) {
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
+            .clickable { navController.navigate("product/${restaurant.name}") }
     ) {
         AsyncImage(
             model = restaurant.logo,
@@ -235,10 +237,4 @@ fun RestaurantItem(restaurant: Restaurant) {
 
         Spacer(modifier = Modifier.height(10.dp))
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun RestaurantsPreview() {
-    RestaurantScreen()
 }

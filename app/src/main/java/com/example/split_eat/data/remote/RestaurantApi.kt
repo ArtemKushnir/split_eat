@@ -1,6 +1,7 @@
 package com.example.split_eat.data.remote
 
 import com.example.split_eat.data.model.restaurant.CategoryResponse
+import com.example.split_eat.data.model.restaurant.MenuCategories
 import com.example.split_eat.data.model.restaurant.RestaurantResponse
 import retrofit2.Response
 import retrofit2.http.GET
@@ -16,4 +17,9 @@ interface RestaurantApi {
 
     @GET("restaurants/list-categories")
     suspend fun getAllCategories(): Response<CategoryResponse>
+
+    @GET("restaurants/list-menu-categories")
+    suspend fun getMenuCategories(
+        @Query("restaurant") restaurant: String
+    ): Response<MenuCategories>
 }

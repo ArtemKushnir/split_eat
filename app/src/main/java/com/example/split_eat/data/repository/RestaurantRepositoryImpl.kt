@@ -35,4 +35,15 @@ class RestaurantRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun getMenuCategories(restaurant: String): CategoryApiResult {
+        val response = restaurantApi.getMenuCategories(restaurant)
+        return if (response.isSuccessful) {
+            response.body()?.let {
+                CategoryApiResult.Success(response.body()!!.categories)
+            } ?: CategoryApiResult.Error(response.code(), response.errorBody()?.string() ?: "Неизвестная ошибка")
+        } else  {
+            CategoryApiResult.Error(response.code(), response.errorBody()?.string() ?: "Неизвестная ошибка")
+        }
+    }
+
 }

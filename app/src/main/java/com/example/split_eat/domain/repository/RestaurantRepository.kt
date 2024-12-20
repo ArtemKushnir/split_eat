@@ -7,4 +7,6 @@ interface RestaurantRepository {
     suspend fun getAllRestaurants(page: Int?, categoryName: String?, searchText: String?): RestaurantApiResult
 
     suspend fun getAllCategories(): CategoryApiResult
+
+    suspend fun getMenuCategories(restaurant: String): CategoryApiResult
 }
