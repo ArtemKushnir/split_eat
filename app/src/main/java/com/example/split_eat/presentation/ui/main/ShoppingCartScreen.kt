@@ -7,6 +7,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -15,14 +16,17 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Remove
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.AsyncImage
 import com.example.split_eat.presentation.viewmodel.CartViewModel
 import com.example.split_eat.domain.models.CartItem
 import com.example.split_eat.presentation.ui.theme.Tomato
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ShoppingCartScreen() {
     val viewModel: CartViewModel = hiltViewModel()
@@ -85,7 +89,7 @@ fun PlaceOrderButton() {
     }
 
     Button(
-        onClick = {cartViewModel.send_cart()},  // ПЫСЫ СДЕЛАТЬ С СЕРВЕРОМ
+        onClick = {cartViewModel.send_cart()},
         modifier = Modifier.fillMaxWidth(),
         colors = ButtonDefaults.buttonColors(
             containerColor = Tomato,
@@ -109,7 +113,15 @@ fun CartItemRow(
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // ПЫСЫ добавить картинку товара
+            AsyncImage(
+                model = item.image,
+                contentDescription = "Картинка товара",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(100.dp)
+                    .clip(RoundedCornerShape(16.dp)),
+                contentScale = ContentScale.Crop
+            )
             Text(text = item.name, modifier = Modifier.weight(1f))  // наименование товара
             Text(
                 text = "${item.price} ₽",

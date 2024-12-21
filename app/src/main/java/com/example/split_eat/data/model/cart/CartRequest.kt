@@ -1,4 +1,4 @@
-package com.example.split_eat.data.model
+package com.example.split_eat.data.model.cart
 
 import com.example.split_eat.domain.models.CartItem
 

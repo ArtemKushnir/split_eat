@@ -1,6 +1,6 @@
 package com.example.split_eat.data.repository
 
-import com.example.split_eat.data.model.CartRequest
+import com.example.split_eat.data.model.cart.CartRequest
 import com.example.split_eat.data.remote.CartApi
 import com.example.split_eat.domain.models.CartAPIResult
 import com.example.split_eat.domain.models.CartItem

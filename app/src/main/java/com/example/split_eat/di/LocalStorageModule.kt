@@ -3,6 +3,7 @@ package com.example.split_eat.di
 import android.app.Application
 import android.content.Context
 import com.example.split_eat.data.local.TokenStorage
+import com.example.split_eat.data.local.CartStorage
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -20,5 +21,9 @@ object LocalStorageModule {
     @Provides
     fun provideContext(application: Application): Context {
         return application.applicationContext
+    }
+    @Provides
+    fun provideCartStorage(context: Context): CartStorage {
+        return CartStorage(context)
     }
 }
