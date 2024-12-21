@@ -49,10 +49,12 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.navigation.NavController
+import coil.request.ImageRequest
+import com.example.split_eat.R
 
 
 @Composable
-fun RestaurantScreen(navController: NavController) {
+fun RestaurantScreen(navController: NavController?) {
     val restaurantViewModel: RestaurantViewModel = hiltViewModel()
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
@@ -170,7 +172,9 @@ fun RestaurantScreen(navController: NavController) {
         }
 
         items(restaurants) { restaurant ->
-            RestaurantItem(restaurant = restaurant, navController = navController)
+            if (navController != null) {
+                RestaurantItem(restaurant = restaurant, navController = navController)
+            }
             Spacer(modifier = Modifier.height(10.dp))
         }
 
@@ -203,12 +207,16 @@ fun RestaurantItem(restaurant: Restaurant, navController: NavController) {
             .clickable { navController.navigate("product/${restaurant.name}") }
     ) {
         AsyncImage(
-            model = restaurant.logo,
+            model = ImageRequest.Builder(LocalContext.current)
+                .data(restaurant.logo)
+                .placeholder(R.drawable.restaurant_placeholder)
+                .error(R.drawable.error_product)
+                .build(),
             contentDescription = "Лого ресторана",
             modifier = Modifier
                 .fillMaxWidth()
-                .height(200.dp)
-                .clip(RoundedCornerShape(16.dp)),
+                .height(230.dp)
+                .clip(RoundedCornerShape(13.dp)),
             contentScale = ContentScale.Crop
         )
 
