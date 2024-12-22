@@ -58,7 +58,7 @@ open class CartViewModel @Inject constructor(
     fun send_cart() {
         viewModelScope.launch {
             try {
-                when (val response = cartUseCase(cartStorage.getItems())) {
+                when (val response = cartUseCase(cartStorage.getItems()[0].restaurant, cartStorage.getItems(), getTotalPrice())) { // Сделать для разных ресторанов
                     is CartAPIResult.Success -> _messageEvent.emit(response.message)
                     is CartAPIResult.Error -> _messageEvent.emit(response.message)
                 }

@@ -142,3 +142,9 @@ fun CartItemRow(
         }
     }
 }
+
+@Preview(showBackground = true)
+@Composable
+fun preview() {
+    ShoppingCartScreen()
+}

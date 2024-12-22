@@ -31,7 +31,7 @@ class CartStorage @Inject constructor(
     // Добавить товар в корзину
     fun addItem(item: CartItem) {
         val cartItems = getSavedCartItems()
-        val existingItem = cartItems.find { it.id == item.id }
+        val existingItem = cartItems.find { it.name == item.name && it.restaurant == item.restaurant }
         if (existingItem != null) {
             existingItem.quantity += 1
         } else {
@@ -43,12 +43,12 @@ class CartStorage @Inject constructor(
     // Уменьшить количество товара на 1 или удалить
     fun decreaseItemQuantity(item: CartItem) {
         val cartItems = getSavedCartItems()
-        val existingitem = cartItems.find { it.id == item.id }
-        if (existingitem != null) {
-            if (existingitem.quantity > 1) {
-                existingitem.quantity -= 1
+        val existingItem = cartItems.find { it.name == item.name && it.restaurant == item.restaurant }
+        if (existingItem != null) {
+            if (existingItem.quantity > 1) {
+                existingItem.quantity -= 1
             } else {
-                cartItems.remove(existingitem)
+                cartItems.remove(existingItem)
             }
             saveCartItems(cartItems)
         }
@@ -57,12 +57,12 @@ class CartStorage @Inject constructor(
     // Удалить товар из корзины
     fun removeItem(item: CartItem) {
         val cartItems = getSavedCartItems()
-        cartItems.removeAll { it.id == item.id }
+        cartItems.removeAll { it.name == item.name && it.restaurant == item.restaurant }
         saveCartItems(cartItems)
     }
 
     // Получить все товары из корзины
-    fun getItems(): MutableList<CartItem> {
+    fun getItems(): List<CartItem> {
         return getSavedCartItems()
     }
 

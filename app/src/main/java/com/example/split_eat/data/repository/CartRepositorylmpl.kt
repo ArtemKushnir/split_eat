@@ -11,9 +11,11 @@ class CartRepositoryImpl @Inject constructor(
     private val cartApi: CartApi
 ): CartRepository{
     override suspend fun cart(
-        products: MutableList<CartItem>
+        restaurant: String,
+        products: List<CartItem>,
+        total_price: Double
     ): CartAPIResult {
-        val response = cartApi.cart(CartRequest(products))
+        val response = cartApi.cart(CartRequest(restaurant, products, total_price))
         return if (response.isSuccessful) {
             response.body()?.let {
                 CartAPIResult.Success(response.body()!!.message)
