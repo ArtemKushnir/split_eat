@@ -37,7 +37,7 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
                 ?.let { ProductScreen(
                     restaurantName = it,
                     onBackStack = {navController.popBackStack()},
-                    onNavCart = { navController.navigate("main/shopping_cart") },
+                    onNavCart = onNavCart,
                     )}
         }
         composable("main/shopping_cart") {

@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -48,11 +49,15 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.NavController
+import coil.request.ImageRequest
+import com.example.split_eat.R
+import com.example.split_eat.presentation.ui.theme.Gainsboro
 
 
 @Composable
-fun RestaurantScreen(navController: NavController) {
+fun RestaurantScreen(navController: NavController?) {
     val restaurantViewModel: RestaurantViewModel = hiltViewModel()
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
@@ -112,7 +117,8 @@ fun RestaurantScreen(navController: NavController) {
         modifier = Modifier
             .background(Color.White)
             .fillMaxSize()
-            .then(handleOutsideClick),
+            .then(handleOutsideClick)
+            .background(Gainsboro),
         state = listState
     ) {
         item {
@@ -157,7 +163,7 @@ fun RestaurantScreen(navController: NavController) {
                             restaurantViewModel.getRestaurants(currPage, currCategory)
                         },
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = if (selectedCategory == category) Color.LightGray else Color.Gray,
+                            containerColor = if (selectedCategory == category) Color.Gray else Color.DarkGray,
                             contentColor = Color.White
                         )
                     ) {
@@ -170,7 +176,9 @@ fun RestaurantScreen(navController: NavController) {
         }
 
         items(restaurants) { restaurant ->
-            RestaurantItem(restaurant = restaurant, navController = navController)
+            if (navController != null) {
+                RestaurantItem(restaurant = restaurant, navController = navController)
+            }
             Spacer(modifier = Modifier.height(10.dp))
         }
 
@@ -203,12 +211,16 @@ fun RestaurantItem(restaurant: Restaurant, navController: NavController) {
             .clickable { navController.navigate("product/${restaurant.name}") }
     ) {
         AsyncImage(
-            model = restaurant.logo,
+            model = ImageRequest.Builder(LocalContext.current)
+                .data(restaurant.logo)
+                .placeholder(R.drawable.food_placeholder)
+                .error(R.drawable.error_product)
+                .build(),
             contentDescription = "Лого ресторана",
             modifier = Modifier
                 .fillMaxWidth()
-                .height(200.dp)
-                .clip(RoundedCornerShape(16.dp)),
+                .height(230.dp)
+                .clip(RoundedCornerShape(13.dp)),
             contentScale = ContentScale.Crop
         )
 
@@ -216,24 +228,30 @@ fun RestaurantItem(restaurant: Restaurant, navController: NavController) {
 
         Row(
             modifier = Modifier
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .padding(horizontal = 8.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
                 text = restaurant.name,
                 color = Color.Black,
-                fontSize = 15.sp
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
             )
             Text(
                 text = restaurant.categories.joinToString(separator = ", "),
-                color = Color.Black,
-                fontSize = 15.sp
+                color = Color.DarkGray,
+                fontSize = 12.sp,
+                modifier = Modifier.padding(start = 10.dp)
             )
         }
-
         Spacer(modifier = Modifier.height(5.dp))
-
-        Text(text = "Бесплатная доставка от ${restaurant.free_shipping_price}₽", fontSize = 12.sp)
+        Text(
+            text = "Бесплатная доставка от ${restaurant.free_shipping_price}₽",
+            fontSize = 15.sp,
+            color = Color.DarkGray,
+            modifier = Modifier.padding(horizontal = 8.dp),
+            )
 
         Spacer(modifier = Modifier.height(10.dp))
     }
