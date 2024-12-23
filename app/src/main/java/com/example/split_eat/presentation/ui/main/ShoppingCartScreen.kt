@@ -15,12 +15,15 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Remove
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.example.split_eat.presentation.viewmodel.CartViewModel
@@ -30,6 +33,9 @@ import com.example.split_eat.presentation.ui.theme.Tomato
 @Composable
 fun ShoppingCartScreen() {
     val viewModel: CartViewModel = hiltViewModel()
+    val cartItems by viewModel.cartItems.collectAsState()
+    val totalPrice by viewModel.totalPrice.collectAsState()
+
     Scaffold(
         content = { paddingValues ->
             Column(
@@ -38,9 +44,9 @@ fun ShoppingCartScreen() {
                     .padding(paddingValues)
                     .background(Color.White)
             ) {
-                ItemsList(viewModel)
+                ItemsList(viewModel, cartItems)
                 Spacer(modifier = Modifier.weight(1f))
-                TotalAmountText(viewModel)
+                TotalAmountText(totalPrice)
                 PlaceOrderButton()
             }
         }
@@ -48,9 +54,7 @@ fun ShoppingCartScreen() {
 }
 
 @Composable
-fun ItemsList(viewModel: CartViewModel) {
-    val cartItems = viewModel.cartItems
-
+fun ItemsList(viewModel: CartViewModel, cartItems: List<CartItem>) {
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
@@ -67,9 +71,7 @@ fun ItemsList(viewModel: CartViewModel) {
 }
 
 @Composable
-fun TotalAmountText(viewModel: CartViewModel) {
-    val totalPrice = viewModel.getTotalPrice()
-
+fun TotalAmountText(totalPrice: Double) {
     Text(
         text = "Общая сумма: ${"%.2f".format(totalPrice)} ₽",
         style = MaterialTheme.typography.headlineMedium,
@@ -117,10 +119,10 @@ fun CartItemRow(
                 model = item.image,
                 contentDescription = "Картинка товара",
                 modifier = Modifier
-                    .fillMaxWidth()
                     .height(100.dp)
+                    .width(100.dp)
                     .clip(RoundedCornerShape(16.dp)),
-                contentScale = ContentScale.Crop
+                contentScale = ContentScale.Fit
             )
             Text(text = item.name, modifier = Modifier.weight(1f))  // наименование товара
             Text(
@@ -141,10 +143,4 @@ fun CartItemRow(
             }
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun preview() {
-    ShoppingCartScreen()
 }

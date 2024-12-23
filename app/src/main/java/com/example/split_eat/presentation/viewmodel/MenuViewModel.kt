@@ -1,9 +1,12 @@
 package com.example.split_eat.presentation.viewmodel
 
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.split_eat.data.local.CartStorage
+import com.example.split_eat.domain.models.CartItem
 import com.example.split_eat.domain.models.CategoryApiResult
 import com.example.split_eat.domain.models.Product
 import com.example.split_eat.domain.models.ProductApiResult
@@ -15,11 +18,13 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.example.split_eat.presentation.viewmodel.CartViewModel
 
 @HiltViewModel
 class MenuViewModel @Inject constructor(
     private val getMenuCategories: GetMenuCategoriesUseCase,
-    private val getMenuRestaurant: GetMenuRestaurantUseCase
+    private val getMenuRestaurant: GetMenuRestaurantUseCase,
+    private val cartStorage: CartStorage
 ) : ViewModel() {
 
     private val _isLoading = MutableLiveData(false)
@@ -34,7 +39,6 @@ class MenuViewModel @Inject constructor(
 
     private val _products = MutableLiveData<List<Product>>()
     val products: LiveData<List<Product>> get() = _products
-
 
     fun getCategories(restaurant: String) {
         viewModelScope.launch {
@@ -78,6 +82,10 @@ class MenuViewModel @Inject constructor(
             isNextPage = true
             _isLoading.value = false
         }
+    }
+
+    fun addProductInCart(product: Product, restaurantName: String) {
+        cartStorage.addItem(CartItem(name = product.name, restaurant = restaurantName, image = product.image, price = product.price, quantity = 1))
     }
 
 }
