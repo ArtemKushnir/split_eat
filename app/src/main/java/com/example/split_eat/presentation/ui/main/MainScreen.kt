@@ -1,11 +1,8 @@
 package com.example.split_eat.presentation.ui.main
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -17,8 +14,8 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.split_eat.presentation.ui.theme.Tomato
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -28,7 +25,8 @@ fun MainScreen(
     onNavRestaurant: () -> Unit,
     onNavCart: () -> Unit,
     currentRoute: String,
-    title: String
+    title: String,
+    navController: NavController? = null
 ) {
     Scaffold(
         topBar = {
@@ -60,14 +58,9 @@ fun MainScreen(
     ) { paddingValues ->
         Box(modifier = Modifier.padding(paddingValues)) {
             when (currentRoute) {
-                "main/restaurant" -> RestaurantScreen()
+                "main/restaurant" -> RestaurantScreen(navController = navController)
                 "main/shopping_cart" -> ShoppingCartScreen()
             }
         }
     }
-}
-@Preview(showBackground = true)
-@Composable
-fun BottomNavPreview() {
-    MainScreen({ println()}, { println() }, { println() }, "", "")
 }
