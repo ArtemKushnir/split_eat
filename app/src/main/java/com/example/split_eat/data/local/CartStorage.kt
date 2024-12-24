@@ -10,6 +10,9 @@ import com.example.split_eat.domain.models.CartItem
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
+class DifferentRestaurantException(message: String) : Exception(message)
+
+
 @Singleton
 class CartStorage @Inject constructor(
     private val context: Context
@@ -48,13 +51,17 @@ class CartStorage @Inject constructor(
     // Добавить товар в корзину
     fun addItem(item: CartItem) {
         val cartItems = getSavedCartItems().toMutableList()
-        val existingItem = cartItems.find { it.name == item.name && it.restaurant == item.restaurant }
-        if (existingItem != null) {
-            existingItem.quantity += 1
+        if (cartItems.isNotEmpty() && item.restaurant != cartItems[0].restaurant) {
+            throw DifferentRestaurantException("Нельзя добавить товары из разных ресторанов")
         } else {
-            cartItems.add(item.copy(quantity = 1))
+            val existingItem = cartItems.find { it.id_product == item.id_product }
+            if (existingItem != null) {
+                existingItem.quantity += 1
+            } else {
+                cartItems.add(item.copy(quantity = 1))
+            }
+            saveCartItems(cartItems)
         }
-        saveCartItems(cartItems)
     }
 
     // Уменьшить количество товара на 1 или удалить

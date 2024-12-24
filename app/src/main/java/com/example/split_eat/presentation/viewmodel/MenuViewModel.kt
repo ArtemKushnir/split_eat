@@ -90,7 +90,23 @@ class MenuViewModel @Inject constructor(
     }
 
     fun addProductInCart(product: Product, restaurantName: String) {
-        cartStorage.addItem(CartItem(id_product = product.id, name = product.name, restaurant = restaurantName, image = product.image, price = product.price, quantity = 1))
+        viewModelScope.launch {
+            try {
+                cartStorage.addItem(
+                    CartItem(
+                        id_product = product.id,
+                        name = product.name,
+                        restaurant = restaurantName,
+                        image = product.image,
+                        price = product.price,
+                        quantity = 1
+                    )
+                )
+            } catch (e: Exception) {
+                _messageEvent.emit(
+                    e.message ?: "Нельзя добавить товары из разных ресторанов"
+                )
+            }
+        }
     }
-
 }
