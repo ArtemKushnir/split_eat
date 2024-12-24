@@ -44,13 +44,6 @@ class CartViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    // Обновляем список товаров, когда его количество изменяется
-    //private fun updateCartItems() {
-        //_cartItems.clear()
-        //_cartItems.addAll(cartStorage.getItems())
-        //calculateTotalPrice()
-    //}
-
     // Пересчет итоговой суммы
     private fun calculateTotalPrice() {
         _totalPrice.value = _cartItems.value.sumOf { it.price * it.quantity }
@@ -59,13 +52,11 @@ class CartViewModel @Inject constructor(
     // Увеличиваем количество товара в корзине
     fun increaseQuantity(item: CartItem) {
         cartStorage.addItem(item)
-        //updateCartItems() // Обновляем список товаров
     }
 
     // Уменьшаем количество товара в корзине
     fun decreaseQuantity(item: CartItem) {
         cartStorage.decreaseItemQuantity(item)
-        //updateCartItems() // Обновляем список товаров
     }
 
     // Отправляем корзину на сервер

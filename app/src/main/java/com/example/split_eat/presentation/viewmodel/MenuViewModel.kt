@@ -85,7 +85,7 @@ class MenuViewModel @Inject constructor(
     }
 
     fun addProductInCart(product: Product, restaurantName: String) {
-        cartStorage.addItem(CartItem(name = product.name, restaurant = restaurantName, image = product.image, price = product.price, quantity = 1))
+        cartStorage.addItem(CartItem(id_product = product.id, name = product.name, restaurant = restaurantName, image = product.image, price = product.price, quantity = 1))
     }
 
 }
