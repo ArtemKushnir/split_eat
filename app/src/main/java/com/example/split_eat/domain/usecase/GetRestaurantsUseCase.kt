@@ -5,7 +5,7 @@ import com.example.split_eat.domain.repository.RestaurantRepository
 import javax.inject.Inject
 
 class GetRestaurantsUseCase @Inject constructor(private val restaurantRepository: RestaurantRepository) {
-    suspend operator fun invoke(page: Int?, categoryName: String?, searchText: String?): RestaurantApiResult? {
+    suspend operator fun invoke(page: Int?, categoryName: String?, searchText: String?): RestaurantApiResult {
         return restaurantRepository.getAllRestaurants(page, categoryName, searchText)
     }
 }
