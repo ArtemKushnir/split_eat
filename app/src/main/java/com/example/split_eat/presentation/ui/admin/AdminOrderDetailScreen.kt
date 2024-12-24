@@ -13,7 +13,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.split_eat.domain.models.AdminOrder
-import com.example.split_eat.presentation.ui.main.ImageRow
+import com.example.split_eat.presentation.ui.profile.ImageRow
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

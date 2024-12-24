@@ -18,7 +18,7 @@ fun NavGraphBuilder.authGraph(navController: NavController) {
         composable("auth/login") {
             LoginScreen(
                 onPopBack = {navController.popBackStack()},
-                onLogin = {navController.navigate("admin/orders") {
+                onLogin = {navController.navigate("main") {
                     popUpTo("auth") { inclusive = true } }
                 }
             )

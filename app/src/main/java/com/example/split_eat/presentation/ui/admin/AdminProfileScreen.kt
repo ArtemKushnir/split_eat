@@ -37,8 +37,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.split_eat.R
-import com.example.split_eat.presentation.ui.main.ProfileImage
-import com.example.split_eat.presentation.ui.main.loadActiveOrders
+import com.example.split_eat.presentation.ui.profile.ProfileImage
 
 data class Order(val orderNumber: String, val amount: Double)
 data class Photo(val imageResId: Int, val caption: String)
