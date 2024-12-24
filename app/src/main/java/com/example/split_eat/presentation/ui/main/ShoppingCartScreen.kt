@@ -44,10 +44,8 @@ fun ShoppingCartScreen() {
                     .padding(paddingValues)
                     .background(Color.White)
             ) {
-                // Список товаров занимает всё доступное пространство
                 ItemsList(viewModel, cartItems, Modifier.weight(1f))
 
-                // Нижняя часть с общей суммой и кнопкой
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -73,10 +71,8 @@ fun ItemsList(viewModel: CartViewModel, cartItems: List<CartItem>, modifier: Mod
             .padding(start = 16.dp)
 
     ) {
-        // Для каждой группы (ресторан)
         groupedItems.forEach { (restaurantName, items) ->
             item {
-                // Заголовок ресторана
                 Text(
                     text = restaurantName,
                     style = MaterialTheme.typography.titleLarge,
@@ -85,7 +81,6 @@ fun ItemsList(viewModel: CartViewModel, cartItems: List<CartItem>, modifier: Mod
                         .padding(vertical = 8.dp)
                 )
             }
-            // Отображаем товары внутри ресторана
             items(items) { item ->
                 CartItemRow(
                     item = item,
@@ -159,34 +154,32 @@ fun CartItemRow(
                 contentScale = ContentScale.Fit
             )
 
-            // Новый столбец для названия и цены
             Column(
                 modifier = Modifier
                     .weight(1f)
                     .padding(horizontal = 8.dp)
             ) {
                 Text(
-                    text = item.name, // Название продукта
-                    //style = MaterialTheme.typography.bodyLarge,
+                    text = item.name,
                     style = MaterialTheme.typography.bodySmall,
                     modifier = Modifier.padding(bottom = 4.dp)
                 )
                 Text(
-                    text = "${item.price} ₽", // Цена продукта
+                    text = "${item.price} ₽",
                     style = MaterialTheme.typography.bodyMedium,
                     color = Color.Gray
                 )
             }
 
             Row {
-                IconButton(onClick = onDecrease) { // Уменьшить количество
+                IconButton(onClick = onDecrease) {
                     Icon(Icons.Default.Remove, contentDescription = "Уменьшить")
                 }
                 Text(
                     text = "${item.quantity}",
                     modifier = Modifier.padding(top = 12.dp, start = 8.dp, end = 8.dp)
-                ) // Количество
-                IconButton(onClick = onIncrease) { // Увеличить количество
+                )
+                IconButton(onClick = onIncrease) {
                     Icon(Icons.Default.Add, contentDescription = "Увеличить")
                 }
             }
