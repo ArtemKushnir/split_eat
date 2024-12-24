@@ -52,16 +52,13 @@ class AuthRepositoryImpl @Inject constructor(
                 response.errorBody()?.string()?.filter { it in 'А'..'я' || it.isWhitespace()}?:"Неизвестная ошибка")}
     }
 
-    override suspend fun updateAccessToken(refreshToken: String): ApiResult {
+    override suspend fun updateAccessToken() {
+        val refreshToken = tokenStorage.getRefreshToken() ?: ""
         val response = authApi.updateAccessToken(UpdateAccessTokenRequest(refreshToken))
-        return if (response.isSuccessful){
+        if (response.isSuccessful){
             response.body()?.let {
                 tokenStorage.updateAccessToken(it.accessToken)
-                ApiResult.Success
-            } ?: ApiResult.Error(response.code(), "Неизвестная ошибка")
-        } else {
-            ApiResult.Error(
-                response.code(),
-                response.errorBody()?.string()?.filter { it in 'А'..'я' || it.isWhitespace()}?:"Неизвестная ошибка")}
+            }
+        }
     }
 }

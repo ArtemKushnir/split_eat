@@ -6,7 +6,9 @@ import retrofit2.converter.gson.GsonConverterFactory
 import okhttp3.logging.HttpLoggingInterceptor
 import javax.inject.Inject
 
-class ApiClient @Inject constructor() {
+class ApiClient @Inject constructor(
+    private val authorizationInterceptor: AuthorizationInterceptor,
+) {
 
     private val BASE_URL = "http://10.0.2.2:8000/"
 
@@ -14,6 +16,7 @@ class ApiClient @Inject constructor() {
         .addInterceptor(HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BODY
         })
+        .addInterceptor(authorizationInterceptor)
         .build()
 
     private val retrofit: Retrofit = Retrofit.Builder()
