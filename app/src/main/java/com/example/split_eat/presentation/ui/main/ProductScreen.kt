@@ -66,9 +66,11 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.split_eat.R
 import com.example.split_eat.domain.models.Product
+import com.example.split_eat.domain.models.Restaurant
 import com.example.split_eat.presentation.ui.theme.Gainsboro
 import com.example.split_eat.presentation.ui.theme.LightGrey
 import com.example.split_eat.presentation.ui.theme.Tomato
+import com.example.split_eat.presentation.viewmodel.CartViewModel
 import com.example.split_eat.presentation.viewmodel.MenuViewModel
 import com.example.split_eat.presentation.viewmodel.RestaurantViewModel
 
@@ -217,7 +219,7 @@ fun Content(onNavCart: () -> Unit, restaurantName: String) {
                 modifier = Modifier.padding(8.dp),
                 content = {
                     items(products) { product ->
-                        ProductItem(product)
+                        ProductItem(menuViewModel, product, restaurantName)
                     }
 
                     if (isLoading) {
@@ -251,7 +253,7 @@ fun Content(onNavCart: () -> Unit, restaurantName: String) {
 }
 
 @Composable
-fun ProductItem(product: Product) {
+fun ProductItem(menuViewModel: MenuViewModel, product: Product, nameRestaurant: String) {
     val unitsOfMeasurement = mapOf(
         "g" to " г",
         "ml" to " мл",
@@ -325,7 +327,7 @@ fun ProductItem(product: Product) {
         Spacer(modifier = Modifier.height(5.dp))
 
         Button(
-            onClick = { /*TODO*/ },
+            onClick = { menuViewModel.addProductInCart(product, nameRestaurant) },
             modifier = Modifier
                 .padding(horizontal = 8.dp)
                 .padding(bottom = 5.dp)

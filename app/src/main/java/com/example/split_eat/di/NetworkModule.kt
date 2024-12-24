@@ -2,6 +2,7 @@ package com.example.split_eat.di
 
 import com.example.split_eat.data.remote.ApiClient
 import com.example.split_eat.data.remote.AuthApi
+import com.example.split_eat.data.remote.CartApi
 import com.example.split_eat.data.remote.AuthApiClient
 import com.example.split_eat.data.remote.RestaurantApi
 import dagger.Module
@@ -18,6 +19,12 @@ object NetworkModule {
     @Singleton
     fun provideAuthApi(authApiClient: AuthApiClient): AuthApi {
         return authApiClient.authApi
+    }
+
+    @Provides
+    @Singleton
+    fun provideCartApi(apiClient: ApiClient): CartApi {
+        return apiClient.cartApi
     }
 
     @Provides

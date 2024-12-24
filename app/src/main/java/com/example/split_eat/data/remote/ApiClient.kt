@@ -28,4 +28,5 @@ class ApiClient @Inject constructor(
         .build()
 
     val restaurantApi: RestaurantApi = retrofit.create(RestaurantApi::class.java)
+    val cartApi: CartApi = retrofit.create(CartApi::class.java)
 }
