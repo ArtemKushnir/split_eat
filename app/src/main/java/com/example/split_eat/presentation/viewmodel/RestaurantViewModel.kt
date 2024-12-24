@@ -24,9 +24,6 @@ class RestaurantViewModel @Inject constructor(
     private val getRestaurantsUseCase: GetRestaurantsUseCase
 ): ViewModel(){
 
-    private val _isAuth = MutableLiveData(false)
-    val isAuth: LiveData<Boolean> get() = _isAuth
-
     private val _isLoading = MutableLiveData(false)
     val isLoading: LiveData<Boolean> get() = _isLoading
 
@@ -45,7 +42,6 @@ class RestaurantViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 when (val response = getCategoriesUseCase()) {
-                    null -> _isAuth.value = false
                     is CategoryApiResult.Success -> _categories.postValue(listOf("Все") + response.categories)
                     is CategoryApiResult.Error -> _messageEvent.emit(response.message)
                 }
@@ -61,7 +57,6 @@ class RestaurantViewModel @Inject constructor(
             try {
                 _isLoading.value = true
                 when (val response = getRestaurantsUseCase(page, category, search)) {
-                    null -> _isAuth.value = false
                     is RestaurantApiResult.Success -> {
                         if (response.next == null) isNextPage = false
                         _restaurants.postValue(_restaurants.value.orEmpty() + response.restaurants)
