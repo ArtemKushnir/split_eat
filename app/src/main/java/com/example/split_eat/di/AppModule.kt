@@ -1,9 +1,11 @@
 package com.example.split_eat.di
 
 import androidx.lifecycle.ViewModel
+import com.example.split_eat.data.repository.AdminOrderRepositoryImpl
 import com.example.split_eat.data.repository.AuthRepositoryImpl
 import com.example.split_eat.data.repository.OrderRepositoryImpl
 import com.example.split_eat.data.repository.RestaurantRepositoryImpl
+import com.example.split_eat.domain.repository.AdminOrderRepository
 import com.example.split_eat.domain.repository.AuthRepository
 import com.example.split_eat.domain.repository.OrderRepository
 import com.example.split_eat.domain.repository.RestaurantRepository
@@ -45,4 +47,6 @@ abstract class ViewModelModule {
     @IntoMap
     @StringKey("com.example.myapp.presentation.viewmodel.OrderViewModel")
     abstract fun bindOrderViewModel(viewModel: OrderViewModel): ViewModel
+    @Binds
+    abstract fun bindAdminOrderRepository(adminOrderRepositoryImpl: AdminOrderRepositoryImpl): AdminOrderRepository
 }
