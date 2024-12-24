@@ -40,6 +40,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.split_eat.presentation.viewmodel.AuthViewModel
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.split_eat.presentation.ui.main.user
 
 
 @Composable
@@ -161,7 +162,8 @@ fun LoginButton(onLogin: () -> Unit, onAdminLogin: () -> Unit,email: String, pas
 
     CustomButton(
         text = "Войти",
-        onClick = { authViewModel.login(email, password) },
+        onClick = { authViewModel.login(email, password);
+            user = email },
         colors = ButtonDefaults.buttonColors(
             contentColor = Color.Black,
             containerColor = Tomato

@@ -1,5 +1,6 @@
 package com.example.split_eat.presentation.ui.profile
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -27,38 +28,56 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.example.split_eat.R
 import com.example.split_eat.domain.models.Order
+import com.example.split_eat.presentation.ui.main.user
 import com.example.split_eat.presentation.ui.theme.Tomato
 import com.example.split_eat.presentation.viewmodel.OrderViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(navController: NavController, onPopBack: () -> Unit, onLogOut: () -> Unit, viewModel: OrderViewModel = hiltViewModel()) {
+    val context = LocalContext.current
+    val orderViewModel: OrderViewModel = hiltViewModel()
     var selectedTab by remember { mutableStateOf("active") }
-    val activeOrders = remember { mutableStateOf(loadActiveOrders()) }
-    val completedOrders = remember { mutableStateOf(loadCompletedOrders()) }
-    val userName = "John Doe" // Имя пользователя
+    val activeOrders by orderViewModel.activeOrders.observeAsState(emptyList())
+    val completedOrders by orderViewModel.completedOrders.observeAsState(emptyList())
+    val userName = user // Имя пользователя
+    val scope = rememberCoroutineScope()
+
+
+    LaunchedEffect(Unit) {
+        viewModel.getActiveOrders(user, "Matched")
+        viewModel.getActiveOrders(user, "Not matched")
+        viewModel.getCompletedOrders(user, "Closed")
+
+        scope.launch{
+            viewModel.messageEvent.collect { message ->
+                Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -103,7 +122,7 @@ fun ProfileScreen(navController: NavController, onPopBack: () -> Unit, onLogOut:
             Row(modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceAround) {
                 Button(
-                    onClick = { selectedTab = "active"; activeOrders.value = loadActiveOrders() },
+                    onClick = { selectedTab = "active"},
                     modifier = Modifier.padding(8.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = if(selectedTab == "active") Tomato else MaterialTheme.colorScheme.secondary,
@@ -116,7 +135,7 @@ fun ProfileScreen(navController: NavController, onPopBack: () -> Unit, onLogOut:
                 }
 
                 Button(
-                    onClick = { selectedTab = "completed"; completedOrders.value = loadCompletedOrders() },
+                    onClick = { selectedTab = "completed"},
                     modifier = Modifier.padding(8.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = if(selectedTab == "active") MaterialTheme.colorScheme.secondary else Tomato,
                         contentColor = Color.Black,
@@ -129,9 +148,9 @@ fun ProfileScreen(navController: NavController, onPopBack: () -> Unit, onLogOut:
 
             // Список заказов (зависит от выбранной вкладки)
             if (selectedTab == "active") {
-                OrderList(orders = activeOrders.value)
+                OrderList(orders = activeOrders)
             } else {
-                OrderList(orders = completedOrders.value)
+                OrderList(orders = completedOrders)
             }
         }
     }
@@ -159,36 +178,43 @@ fun OrderItem(order: Order) {
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(text = "Заказ #${order.id}", style = MaterialTheme.typography.titleMedium, color = Tomato)
-            Text(text = order.title, style = MaterialTheme.typography.titleMedium, color = Tomato)
+            Text(text = order.restaurant, style = MaterialTheme.typography.titleMedium, color = Tomato)
             Text(text = "Статус: ${order.status}", fontSize = 15.sp, color = Tomato)
+            Text(text = "Стоимость заказа: ${order.total_price}", fontSize = 15.sp, color = Tomato)
             Spacer(modifier = Modifier.height(8.dp))
-            ImageRow(images = listOf(
-                "https://placekitten.com/100/100",
-                "https://placekitten.com/200/200",
-                "https://placekitten.com/200/200",
-                "https://placekitten.com/200/200",
-                "https://placekitten.com/300/300"
-            ), captions = listOf("Image 1", "Image 2", "Image 3", "Image 4", "Image 5"))
+            ImageRow(
+                images = order.prod_images
+            , captions = order.prod_names)
         }
     }
 }
 
-// Заглушка для получения данных из БД
-fun loadActiveOrders(): List<Order> {
-    return listOf(
-        Order(1, "Покупка продуктов", "В процессе"),
-        Order(1, "Покупка продуктов", "В процессе"),
-        Order(1, "Покупка продуктов", "В процессе"),
-        Order(2, "Заказ техники", "Ожидает отправки"),
-    )
-}
+//// Заглушка для получения данных из БД
+//fun getActiveOrders(): List<Order> {
+//    return listOf(
+//        Order(1, "Покупка продуктов", "В процессе"),
+//        Order(1, "Покупка продуктов", "В процессе"),
+//        Order(1, "Покупка продуктов", "В процессе"),
+//        Order(2, "Заказ техники", "Ожидает отправки"),
+//    )
+//}
 
-fun loadCompletedOrders(): List<Order> {
-    return listOf(
-        Order(3, "Доставка цветов", "Завершен"),
-        Order(4, "Ремонт телефона", "Завершен"),
-    )
-}
+//fun getCompletedOrders(): List<Order> {
+//    return listOf(
+//        Order(
+//            3, "Доставка цветов", "Завершен",
+//            total_price = TODO(),
+//            prod_images = TODO(),
+//            prod_names = TODO()
+//        ),
+//        Order(
+//            4, "Ремонт телефона", "Завершен",
+//            total_price = 100,
+//            prod_images = TODO(),
+//            prod_names = TODO()
+//        ),
+//    )
+//}
 
 @Composable
 fun ProfileImage(){
@@ -202,7 +228,7 @@ fun ProfileImage(){
 }
 
 @Composable
-fun ImageRow(images: List<String>, captions: List<String>) {
+fun ImageRow(images: List<Any>, captions: List<String>) {
     LazyRow(modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(4.dp)) {
         items(images.size) { index ->
@@ -223,37 +249,37 @@ fun ImageRow(images: List<String>, captions: List<String>) {
     }
 }
 
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun ProfileScreenPreview() {
-    val navController = rememberNavController()
-    val viewModel = FakeOrderViewModel()
-    ProfileScreen(navController = navController, { println("pop_back")}, { println("log_out") }, viewModel = viewModel)
-}
-
-class FakeOrderViewModel: OrderViewModel(FakeOrderRepository()){
-    override val activeOrders: StateFlow<List<Order>> = MutableStateFlow(
-        listOf(
-            Order(1, "Покупка продуктов", "В процессе"),
-            Order(2, "Заказ техники", "Ожидает отправки"),
-        )
-    )
-    override val completedOrders: StateFlow<List<Order>> = MutableStateFlow(
-        listOf(
-            Order(3, "Доставка цветов", "Завершен"),
-            Order(4, "Ремонт телефона", "Завершен"),
-        )
-    )
-}
-
-class FakeOrderRepository: com.example.split_eat.domain.repository.OrderRepository {
-    override suspend fun getActiveOrders(): List<Order> = listOf(
-        Order(1, "Покупка продуктов", "В процессе"),
-        Order(2, "Заказ техники", "Ожидает отправки"),
-    )
-
-    override suspend fun getCompletedOrders(): List<Order> = listOf(
-        Order(3, "Доставка цветов", "Завершен"),
-        Order(4, "Ремонт телефона", "Завершен"),
-    )
-}
+//@Preview(showBackground = true, showSystemUi = true)
+//@Composable
+//fun ProfileScreenPreview() {
+//    val navController = rememberNavController()
+//    val viewModel = FakeOrderViewModel()
+//    ProfileScreen(navController = navController, { println("pop_back")}, { println("log_out") }, viewModel = viewModel)
+//}
+//
+//class FakeOrderViewModel: OrderViewModel(FakeOrderRepository()){
+//    override val activeOrders: StateFlow<List<Order>> = MutableStateFlow(
+//        listOf(
+//            Order(1, "Покупка продуктов", "В процессе"),
+//            Order(2, "Заказ техники", "Ожидает отправки"),
+//        )
+//    )
+//    override val completedOrders: StateFlow<List<Order>> = MutableStateFlow(
+//        listOf(
+//            Order(3, "Доставка цветов", "Завершен"),
+//            Order(4, "Ремонт телефона", "Завершен"),
+//        )
+//    )
+//}
+//
+//class FakeOrderRepository: OrderRepository {
+//    override suspend fun getActiveOrders(): List<Order> = listOf(
+//        Order(1, "Покупка продуктов", "В процессе"),
+//        Order(2, "Заказ техники", "Ожидает отправки"),
+//    )
+//
+//    override suspend fun getCompletedOrders(): List<Order> = listOf(
+//        Order(3, "Доставка цветов", "Завершен"),
+//        Order(4, "Ремонт телефона", "Завершен"),
+//    )
+//}
