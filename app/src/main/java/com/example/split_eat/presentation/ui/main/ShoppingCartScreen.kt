@@ -44,39 +44,73 @@ fun ShoppingCartScreen() {
                     .padding(paddingValues)
                     .background(Color.White)
             ) {
-                ItemsList(viewModel, cartItems)
-                Spacer(modifier = Modifier.weight(1f))
-                TotalAmountText(totalPrice)
-                PlaceOrderButton()
+                // Список товаров занимает всё доступное пространство
+                ItemsList(viewModel, cartItems, Modifier.weight(1f))
+
+                // Нижняя часть с общей суммой и кнопкой
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    TotalAmountText(totalPrice)
+                    PlaceOrderButton()
+                }
             }
         }
     )
 }
 
 @Composable
-fun ItemsList(viewModel: CartViewModel, cartItems: List<CartItem>) {
+fun ItemsList(viewModel: CartViewModel, cartItems: List<CartItem>, modifier: Modifier = Modifier) {
+    val groupedItems = cartItems.groupBy { it.restaurant }
+
     LazyColumn(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(start = 16.dp)
+
     ) {
-        items(cartItems) { item ->
-            CartItemRow(
-                item = item,
-                onIncrease = { viewModel.increaseQuantity(item) },
-                onDecrease = { viewModel.decreaseQuantity(item) }
-            )
+        // Для каждой группы (ресторан)
+        groupedItems.forEach { (restaurantName, items) ->
+            item {
+                // Заголовок ресторана
+                Text(
+                    text = restaurantName,
+                    style = MaterialTheme.typography.titleLarge,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp)
+                )
+            }
+            // Отображаем товары внутри ресторана
+            items(items) { item ->
+                CartItemRow(
+                    item = item,
+                    onIncrease = { viewModel.increaseQuantity(item) },
+                    onDecrease = { viewModel.decreaseQuantity(item) }
+                )
+            }
         }
     }
 }
 
 @Composable
 fun TotalAmountText(totalPrice: Double) {
-    Text(
-        text = "Общая сумма: ${"%.2f".format(totalPrice)} ₽",
-        style = MaterialTheme.typography.headlineMedium,
-        modifier = Modifier.padding(top = 16.dp, bottom = 16.dp, start = 16.dp)
-    )
+    Column {
+        Text(
+            text = "Общая сумма:",
+            style = MaterialTheme.typography.bodyMedium,
+            color = Color.Gray,
+            modifier = Modifier.padding(bottom = 4.dp)
+        )
+        Text(
+            text = "${"%.2f".format(totalPrice)} ₽",
+            style = MaterialTheme.typography.bodyLarge
+        )
+    }
 }
 
 @Composable
@@ -91,8 +125,8 @@ fun PlaceOrderButton() {
     }
 
     Button(
-        onClick = {cartViewModel.send_cart()},
-        modifier = Modifier.fillMaxWidth(),
+        onClick = { cartViewModel.send_cart() },
+        modifier = Modifier.height(40.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = Tomato,
             contentColor = Color.Black
@@ -121,23 +155,38 @@ fun CartItemRow(
                 modifier = Modifier
                     .height(100.dp)
                     .width(100.dp)
-                    .clip(RoundedCornerShape(16.dp)),
+                    .clip(RoundedCornerShape(30.dp)),
                 contentScale = ContentScale.Fit
             )
-            Text(text = item.name, modifier = Modifier.weight(1f))  // наименование товара
-            Text(
-                text = "${item.price} ₽",
-                modifier = Modifier.padding(horizontal = 8.dp)
-            )  // цена товара
+
+            // Новый столбец для названия и цены
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(horizontal = 8.dp)
+            ) {
+                Text(
+                    text = item.name, // Название продукта
+                    //style = MaterialTheme.typography.bodyLarge,
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.padding(bottom = 4.dp)
+                )
+                Text(
+                    text = "${item.price} ₽", // Цена продукта
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Color.Gray
+                )
+            }
+
             Row {
-                IconButton(onClick = onDecrease) {  // уменьшить количество
+                IconButton(onClick = onDecrease) { // Уменьшить количество
                     Icon(Icons.Default.Remove, contentDescription = "Уменьшить")
                 }
                 Text(
                     text = "${item.quantity}",
                     modifier = Modifier.padding(top = 12.dp, start = 8.dp, end = 8.dp)
-                )  // количество
-                IconButton(onClick = onIncrease) {  // увеличить количество
+                ) // Количество
+                IconButton(onClick = onIncrease) { // Увеличить количество
                     Icon(Icons.Default.Add, contentDescription = "Увеличить")
                 }
             }
