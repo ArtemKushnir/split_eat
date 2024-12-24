@@ -27,6 +27,9 @@ class MenuViewModel @Inject constructor(
     private val cartStorage: CartStorage
 ) : ViewModel() {
 
+    private val _isAuth = MutableLiveData(true)
+    val isAuth: LiveData<Boolean> get() = _isAuth
+
     private val _isLoading = MutableLiveData(false)
     val isLoading: LiveData<Boolean> get() = _isLoading
     private var isNextPage: Boolean = true
@@ -44,6 +47,7 @@ class MenuViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 when (val response = getMenuCategories(restaurant)) {
+                    null -> _isAuth.value = false
                     is CategoryApiResult.Success -> {
                         _categories.postValue(listOf("Все") + response.categories)
                     }
@@ -62,6 +66,7 @@ class MenuViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                     when (val response = getMenuRestaurant(restaurant, category, search)) {
+                        null -> _isAuth.value = false
                         is ProductApiResult.Success -> {
                             _products.postValue(response.products)
                         }
