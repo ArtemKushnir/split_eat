@@ -57,7 +57,7 @@ class AuthRepositoryImpl @Inject constructor(
         val response = authApi.updateAccessToken(UpdateAccessTokenRequest(refreshToken))
         if (response.isSuccessful){
             response.body()?.let {
-                tokenStorage.updateAccessToken(it.accessToken)
+                tokenStorage.updateAccessToken(it.access)
             }
         }
     }
