@@ -20,6 +20,12 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
             launchSingleTop = true
             restoreState = true
         }}
+    val onNavProfile = {
+        navController.navigate("main/profile") {
+            popUpTo("main") { saveState = true }
+            launchSingleTop = true
+            restoreState = true
+        }}
 
     navigation(startDestination = "main/restaurant", route = "main") {
         composable("main/restaurant") {
@@ -47,6 +53,15 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
                 onNavRestaurant = onNavRestaurant,
                 currentRoute = "main/shopping_cart",
                 title = "Корзина",
+            )
+        }
+        composable("main/profile") {
+            MainScreen(
+                onNavProfile = {navController.navigate("profile")},
+                onNavCart = onNavCart,
+                onNavRestaurant = onNavProfile,
+                currentRoute = "main/profile",
+                title = "Профиль"
             )
         }
     }

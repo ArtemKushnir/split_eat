@@ -8,6 +8,12 @@ import androidx.navigation.navArgument
 import androidx.navigation.navigation
 
 fun NavGraphBuilder.authGraph(navController: NavController) {
+
+    val onNavMain = {
+        navController.navigate("main") {
+            popUpTo("auth") { inclusive = true }
+        }
+    }
     navigation(startDestination = "auth/greeting", route = "auth") {
         composable("auth/greeting") {
             GreetingScreen(
@@ -18,7 +24,8 @@ fun NavGraphBuilder.authGraph(navController: NavController) {
         composable("auth/login") {
             LoginScreen(
                 onPopBack = {navController.popBackStack()},
-                onLogin = {navController.navigate("main") {
+                onLogin = onNavMain,
+                onAdminLogin = {navController.navigate("admin") {
                     popUpTo("auth") { inclusive = true } }
                 }
             )
@@ -37,9 +44,7 @@ fun NavGraphBuilder.authGraph(navController: NavController) {
             if (email != null) {
                 EmailConfirmationDialog(
                     email = email,
-                    onNavigate = {navController.navigate("main") {
-                        popUpTo("auth") { inclusive = true }
-                    } },
+                    onNavigate = onNavMain,
                     onPopBack = { navController.popBackStack() }
                 )
             }

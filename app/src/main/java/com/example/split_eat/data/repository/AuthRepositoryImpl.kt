@@ -5,8 +5,10 @@ import com.example.split_eat.data.remote.AuthApi
 import com.example.split_eat.data.model.auth.ConfirmEmailRequest
 import com.example.split_eat.data.model.auth.LoginRequest
 import com.example.split_eat.data.model.auth.RegisterRequest
+import com.example.split_eat.data.model.auth.StatusRequest
 import com.example.split_eat.data.model.auth.UpdateAccessTokenRequest
 import com.example.split_eat.domain.models.ApiResult
+import com.example.split_eat.domain.models.UserStatus
 import com.example.split_eat.domain.repository.AuthRepository
 import javax.inject.Inject
 
@@ -59,6 +61,16 @@ class AuthRepositoryImpl @Inject constructor(
             response.body()?.let {
                 tokenStorage.updateAccessToken(it.access)
             }
+        }
+    }
+
+    override suspend fun checkUserStatus(email: String): UserStatus {
+        val response = authApi.checkUserStatus(StatusRequest(email))
+        return if (response.isSuccessful) {
+            response.body()?.let {UserStatus.Success(it.is_staff)
+            } ?: UserStatus.Error
+        } else {
+            UserStatus.Error
         }
     }
 }

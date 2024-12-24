@@ -5,6 +5,8 @@ import com.example.split_eat.data.model.auth.LoginRequest
 import com.example.split_eat.data.model.auth.UpdateAccessTokenRequest
 import com.example.split_eat.data.model.auth.RegisterRequest
 import com.example.split_eat.data.model.auth.RegisterResponse
+import com.example.split_eat.data.model.auth.StatusRequest
+import com.example.split_eat.data.model.auth.StatusResponse
 import com.example.split_eat.data.model.auth.TokenResponse
 import com.example.split_eat.data.model.auth.UpdateAccessTokenResponse
 import retrofit2.Response
@@ -23,4 +25,7 @@ interface AuthApi {
 
     @POST("authentication/token/refresh/")
     suspend fun updateAccessToken(@Body refreshTokensRequest: UpdateAccessTokenRequest): Response<UpdateAccessTokenResponse>
+
+    @POST("authentication/get-user-status/")
+    suspend fun checkUserStatus(@Body email:StatusRequest): Response<StatusResponse>
 }
