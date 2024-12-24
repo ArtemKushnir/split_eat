@@ -10,7 +10,8 @@ fun NavGraphBuilder.profileGraph(navController: NavController) {
     navigation(startDestination = "profile/general", route = "profile") {
         composable("profile/general") {
             ProfileScreen(onPopBack = {navController.popBackStack()},
-                onLogOut = { navController.navigate("auth/greeting") },
+                onLogOut = { navController.navigate("auth/greeting") {
+                    popUpTo("main") { inclusive = true } }},
                 navController = navController)
         }
     }
