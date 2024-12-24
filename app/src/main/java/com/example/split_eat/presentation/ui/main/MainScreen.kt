@@ -58,7 +58,7 @@ fun MainScreen(
     ) { paddingValues ->
         Box(modifier = Modifier.padding(paddingValues)) {
             when (currentRoute) {
-                "main/restaurant" -> navController?.let { RestaurantScreen(navController = it) }
+                "main/restaurant" -> RestaurantScreen(navController = navController)
                 "main/shopping_cart" -> ShoppingCartScreen()
             }
         }

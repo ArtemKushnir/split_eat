@@ -18,7 +18,7 @@ import javax.inject.Inject
 class AuthViewModel @Inject constructor(
     private val loginUseCase: LoginUseCase,
     private val registerUseCase: RegisterUseCase,
-    private val confirmEmailUseCase: ConfirmEmailUseCase
+    private val confirmEmailUseCase: ConfirmEmailUseCase,
 ) : ViewModel() {
 
     private val _messageEvent = MutableSharedFlow<String>()
