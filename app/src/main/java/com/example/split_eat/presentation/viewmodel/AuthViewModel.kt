@@ -2,6 +2,8 @@ package com.example.split_eat.presentation.viewmodel
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.split_eat.domain.models.ApiResult
@@ -23,6 +25,9 @@ class AuthViewModel @Inject constructor(
     private val confirmEmailUseCase: ConfirmEmailUseCase,
     private val checkUserStatusUseCase: CheckUserStatusUseCase,
 ) : ViewModel() {
+
+//    private val _navigateToMainScreen = MutableLiveData(false)
+//    val navigateToMainScreen: LiveData<Boolean> get() = _navigateToMainScreen
 
     private val _messageEvent = MutableSharedFlow<String>()
     val messageEvent = _messageEvent.asSharedFlow()

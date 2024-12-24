@@ -8,6 +8,7 @@ import okhttp3.Request
 import okhttp3.Response
 import okhttp3.Route
 import javax.inject.Inject
+import kotlin.system.exitProcess
 
 
 class TokenAuthenticator @Inject constructor(
@@ -41,6 +42,6 @@ class TokenAuthenticator @Inject constructor(
         }
 
         tokenStorage.clear()
-        return null
+        exitProcess(0)
     }
 }

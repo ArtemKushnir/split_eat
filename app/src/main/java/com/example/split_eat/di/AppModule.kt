@@ -4,10 +4,12 @@ import androidx.lifecycle.ViewModel
 import com.example.split_eat.data.repository.AdminOrderRepositoryImpl
 import com.example.split_eat.data.repository.AuthRepositoryImpl
 import com.example.split_eat.data.repository.OrderRepositoryImpl
+import com.example.split_eat.data.repository.CartRepositoryImpl
 import com.example.split_eat.data.repository.RestaurantRepositoryImpl
 import com.example.split_eat.domain.repository.AdminOrderRepository
 import com.example.split_eat.domain.repository.AuthRepository
 import com.example.split_eat.domain.repository.OrderRepository
+import com.example.split_eat.domain.repository.CartRepository
 import com.example.split_eat.domain.repository.RestaurantRepository
 import com.example.split_eat.presentation.viewmodel.OrderViewModel
 import dagger.Binds
@@ -28,6 +30,13 @@ abstract class AppModule {
     abstract fun bindAuthRepository(
         authRepositoryImpl: AuthRepositoryImpl
     ): AuthRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindCartRepository(
+        userRepositoryImpl: CartRepositoryImpl
+    ): CartRepository
+
     @Binds
     @Singleton
     abstract fun bindRestaurantRepository(

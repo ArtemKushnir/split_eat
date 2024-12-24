@@ -1,9 +1,12 @@
 package com.example.split_eat.presentation.viewmodel
 
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.split_eat.data.local.CartStorage
+import com.example.split_eat.domain.models.CartItem
 import com.example.split_eat.domain.models.CategoryApiResult
 import com.example.split_eat.domain.models.Product
 import com.example.split_eat.domain.models.ProductApiResult
@@ -15,15 +18,14 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.example.split_eat.presentation.viewmodel.CartViewModel
 
 @HiltViewModel
 class MenuViewModel @Inject constructor(
     private val getMenuCategories: GetMenuCategoriesUseCase,
-    private val getMenuRestaurant: GetMenuRestaurantUseCase
+    private val getMenuRestaurant: GetMenuRestaurantUseCase,
+    private val cartStorage: CartStorage
 ) : ViewModel() {
-
-    private val _isAuth = MutableLiveData(true)
-    val isAuth: LiveData<Boolean> get() = _isAuth
 
     private val _isLoading = MutableLiveData(false)
     val isLoading: LiveData<Boolean> get() = _isLoading
@@ -38,12 +40,10 @@ class MenuViewModel @Inject constructor(
     private val _products = MutableLiveData<List<Product>>()
     val products: LiveData<List<Product>> get() = _products
 
-
     fun getCategories(restaurant: String) {
         viewModelScope.launch {
             try {
                 when (val response = getMenuCategories(restaurant)) {
-                    null -> _isAuth.value = false
                     is CategoryApiResult.Success -> {
                         _categories.postValue(listOf("Все") + response.categories)
                     }
@@ -62,7 +62,6 @@ class MenuViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                     when (val response = getMenuRestaurant(restaurant, category, search)) {
-                        null -> _isAuth.value = false
                         is ProductApiResult.Success -> {
                             _products.postValue(response.products)
                         }
@@ -85,4 +84,24 @@ class MenuViewModel @Inject constructor(
         }
     }
 
+    fun addProductInCart(product: Product, restaurantName: String) {
+        viewModelScope.launch {
+            try {
+                cartStorage.addItem(
+                    CartItem(
+                        id_product = product.id,
+                        name = product.name,
+                        restaurant = restaurantName,
+                        image = product.image,
+                        price = product.price,
+                        quantity = 1
+                    )
+                )
+            } catch (e: Exception) {
+                _messageEvent.emit(
+                    e.message ?: "Нельзя добавить товары из разных ресторанов"
+                )
+            }
+        }
+    }
 }
