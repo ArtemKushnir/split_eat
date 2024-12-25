@@ -1,21 +1,44 @@
 package com.example.split_eat.data.repository
 
-import com.example.split_eat.domain.models.Order
+import com.example.split_eat.data.remote.OrderApi
+import com.example.split_eat.domain.models.OrderApiResult
 import com.example.split_eat.domain.repository.OrderRepository
-import javax.inject.Inject // Add Inject
+import javax.inject.Inject
 
-class OrderRepositoryImpl @Inject constructor() : OrderRepository {
-    override suspend fun getActiveOrders(): List<Order> {
-        return listOf(
-            Order(1, "Покупка продуктов", "В процессе"),
-            Order(2, "Заказ техники", "Ожидает отправки"),
-        )
+class OrderRepositoryImpl @Inject constructor(private val orderApi: OrderApi) : OrderRepository {
+    override suspend fun getActiveOrders(user: String, status: String): OrderApiResult? {
+        val response = orderApi.getActiveOrders(user, status)
+        if (response.code() == 401) return null
+        return if (response.isSuccessful) {
+            response.body()?.let {
+                OrderApiResult.Success(response.body()!!.carts)
+            } ?: OrderApiResult.Error(
+                response.code(),
+                response.errorBody()?.string() ?: "Неизвестная ошибка"
+            )
+        } else {
+            OrderApiResult.Error(
+                response.code(),
+                response.errorBody()?.string() ?: "Неизвестная ошибка"
+            )
+        }
     }
 
-    override suspend fun getCompletedOrders(): List<Order> {
-        return listOf(
-            Order(3, "Доставка цветов", "Завершен"),
-            Order(4, "Ремонт телефона", "Завершен"),
-        )
+    override suspend fun getCompletedOrders(user: String, status: String): OrderApiResult? {
+        val response = orderApi.getCompletedOrders(user, status)
+        if (response.code() == 401) return null
+        return if (response.isSuccessful) {
+            response.body()?.let {
+                OrderApiResult.Success(response.body()!!.carts)
+            } ?: OrderApiResult.Error(
+                response.code(),
+                response.errorBody()?.string() ?: "Неизвестная ошибка"
+            )
+        } else {
+            OrderApiResult.Error(
+                response.code(),
+                response.errorBody()?.string() ?: "Неизвестная ошибка"
+            )
+        }
     }
 }

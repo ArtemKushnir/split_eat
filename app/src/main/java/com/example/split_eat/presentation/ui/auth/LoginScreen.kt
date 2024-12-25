@@ -40,10 +40,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.split_eat.presentation.viewmodel.AuthViewModel
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.split_eat.presentation.ui.main.user
 
 
 @Composable
-fun LoginScreen(onPopBack: () -> Unit, onLogin: () -> Unit) {
+fun LoginScreen(onPopBack: () -> Unit, onLogin: () -> Unit, onAdminLogin: () -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -64,7 +65,7 @@ fun LoginScreen(onPopBack: () -> Unit, onLogin: () -> Unit) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             LogoText()
-            LoginCard(onLogin)
+            LoginCard(onLogin, onAdminLogin)
         }
     }
 }
@@ -84,7 +85,7 @@ fun LogoText(){
 }
 
 @Composable
-fun LoginCard(onLogin: () -> Unit) {
+fun LoginCard(onLogin: () -> Unit, onAdminLogin: () -> Unit) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     Card(
@@ -106,7 +107,7 @@ fun LoginCard(onLogin: () -> Unit) {
                 EmailTextField(email = email, onEmailChange = { email = it })
             Text(text = "Пароль", fontWeight = FontWeight.Bold, modifier = Modifier.padding(bottom = 8.dp))
             PasswordTextField(password = password, onPasswordChange = { password = it })
-            LoginButton(onLogin, email, password)
+            LoginButton(onLogin, onAdminLogin, email, password)
         }
 
     }
@@ -138,14 +139,18 @@ fun PasswordTextField(password: String, onPasswordChange: (String) -> Unit){
 
 
 @Composable
-fun LoginButton(onLogin: () -> Unit, email: String, password: String){
+fun LoginButton(onLogin: () -> Unit, onAdminLogin: () -> Unit,email: String, password: String){
     val authViewModel: AuthViewModel = hiltViewModel()
     val context = LocalContext.current
 
 
     LaunchedEffect(authViewModel.isLoggedIn.value) {
         if (authViewModel.isLoggedIn.value) {
-            onLogin()
+            if (authViewModel.isStaff.value == true) {
+                onAdminLogin()
+            } else {
+                onLogin()
+            }
         }
     }
 
@@ -157,7 +162,8 @@ fun LoginButton(onLogin: () -> Unit, email: String, password: String){
 
     CustomButton(
         text = "Войти",
-        onClick = { authViewModel.login(email, password) },
+        onClick = { authViewModel.login(email, password);
+            user = email },
         colors = ButtonDefaults.buttonColors(
             contentColor = Color.Black,
             containerColor = Tomato
@@ -189,8 +195,8 @@ fun CustomButton(
 }
 
 
-@Preview(showBackground = true)
-@Composable
-fun LoginScreenPreview() {
-    LoginScreen({ println("pop_back")}, { println("main")})
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun LoginScreenPreview() {
+//    LoginScreen({ println("pop_back")}, { println("main")})
+//}
