@@ -1,5 +1,6 @@
 package com.example.split_eat.presentation.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -26,7 +27,7 @@ open class OrderViewModel @Inject constructor(
     val activeOrders: LiveData<List<Order>> get() = _activeOrders
 
     private val _completedOrders = MutableLiveData<List<Order>>()
-    open val completedOrders: LiveData<List<Order>> get() = _completedOrders
+    val completedOrders: LiveData<List<Order>> get() = _completedOrders
 
     private val _messageEvent = MutableSharedFlow<String>()
     val messageEvent: SharedFlow<String> = _messageEvent
@@ -44,6 +45,8 @@ open class OrderViewModel @Inject constructor(
                     }
                     is OrderApiResult.Success -> {
                         _activeOrders.value = response.orders
+                        Log.d("OrderViewModel", "getActiveOrders success: ${response.orders}")
+                        Log.d("OrderViewModel", "Active orders after setting: ${_activeOrders.value}")
                     }
                     null -> {
                         _messageEvent.emit("Не удалось получить данные")
@@ -56,6 +59,7 @@ open class OrderViewModel @Inject constructor(
             }
         }
     }
+
 
     fun getCompletedOrders(user: String, status: String) {
         viewModelScope.launch {
@@ -73,7 +77,7 @@ open class OrderViewModel @Inject constructor(
                     }
                 }
             } catch (e: Exception) {
-                _messageEvent.emit(e.message ?: "Ошибка получения активных заказов")
+                _messageEvent.emit(e.message ?: "Ошибка получения завершенных заказов")
             } finally {
                 _isLoading.emit(false)
             }

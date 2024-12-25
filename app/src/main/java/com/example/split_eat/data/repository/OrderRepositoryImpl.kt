@@ -11,7 +11,7 @@ class OrderRepositoryImpl @Inject constructor(private val orderApi: OrderApi) : 
         if (response.code() == 401) return null
         return if (response.isSuccessful) {
             response.body()?.let {
-                OrderApiResult.Success(response.body()!!.results)
+                OrderApiResult.Success(response.body()!!.carts)
             } ?: OrderApiResult.Error(
                 response.code(),
                 response.errorBody()?.string() ?: "Неизвестная ошибка"
@@ -29,7 +29,7 @@ class OrderRepositoryImpl @Inject constructor(private val orderApi: OrderApi) : 
         if (response.code() == 401) return null
         return if (response.isSuccessful) {
             response.body()?.let {
-                OrderApiResult.Success(response.body()!!.results)
+                OrderApiResult.Success(response.body()!!.carts)
             } ?: OrderApiResult.Error(
                 response.code(),
                 response.errorBody()?.string() ?: "Неизвестная ошибка"

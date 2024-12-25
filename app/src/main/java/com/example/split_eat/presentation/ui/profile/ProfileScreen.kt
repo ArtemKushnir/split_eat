@@ -59,18 +59,17 @@ import kotlinx.coroutines.launch
 @Composable
 fun ProfileScreen(navController: NavController, onPopBack: () -> Unit, onLogOut: () -> Unit, viewModel: OrderViewModel = hiltViewModel()) {
     val context = LocalContext.current
-    val orderViewModel: OrderViewModel = hiltViewModel()
     var selectedTab by remember { mutableStateOf("active") }
-    val activeOrders by orderViewModel.activeOrders.observeAsState(emptyList())
-    val completedOrders by orderViewModel.completedOrders.observeAsState(emptyList())
-    val userName = user // Имя пользователя
+    val activeOrders by viewModel.activeOrders.observeAsState(emptyList())
+    val completedOrders by viewModel.completedOrders.observeAsState(emptyList())
+    val userName = user
     val scope = rememberCoroutineScope()
 
 
     LaunchedEffect(Unit) {
-        viewModel.getActiveOrders(user, "Matched")
-        viewModel.getActiveOrders(user, "Not matched")
-        viewModel.getCompletedOrders(user, "Closed")
+        viewModel.getActiveOrders(user =userName, status ="None")
+        viewModel.getActiveOrders(user =userName, status ="True")
+        viewModel.getCompletedOrders(user =userName, status ="False")
 
         scope.launch{
             viewModel.messageEvent.collect { message ->
@@ -148,9 +147,9 @@ fun ProfileScreen(navController: NavController, onPopBack: () -> Unit, onLogOut:
 
             // Список заказов (зависит от выбранной вкладки)
             if (selectedTab == "active") {
-                OrderList(orders = activeOrders)
+                OrderList(activeOrders)
             } else {
-                OrderList(orders = completedOrders)
+                OrderList(completedOrders)
             }
         }
     }
@@ -183,39 +182,12 @@ fun OrderItem(order: Order) {
             Text(text = "Стоимость заказа: ${order.total_price}", fontSize = 15.sp, color = Tomato)
             Spacer(modifier = Modifier.height(8.dp))
             ImageRow(
-                images = order.prod_images
-            , captions = order.prod_names)
+                images = order.products.map {it.id_product.image} ,
+                captions =  order.products.map {it.id_product.name}
+            )
         }
     }
 }
-
-//// Заглушка для получения данных из БД
-//fun getActiveOrders(): List<Order> {
-//    return listOf(
-//        Order(1, "Покупка продуктов", "В процессе"),
-//        Order(1, "Покупка продуктов", "В процессе"),
-//        Order(1, "Покупка продуктов", "В процессе"),
-//        Order(2, "Заказ техники", "Ожидает отправки"),
-//    )
-//}
-
-//fun getCompletedOrders(): List<Order> {
-//    return listOf(
-//        Order(
-//            3, "Доставка цветов", "Завершен",
-//            total_price = TODO(),
-//            prod_images = TODO(),
-//            prod_names = TODO()
-//        ),
-//        Order(
-//            4, "Ремонт телефона", "Завершен",
-//            total_price = 100,
-//            prod_images = TODO(),
-//            prod_names = TODO()
-//        ),
-//    )
-//}
-
 @Composable
 fun ProfileImage(){
     Image(
@@ -226,9 +198,8 @@ fun ProfileImage(){
             .padding(bottom = 5.dp, top = 5.dp)
     )
 }
-
 @Composable
-fun ImageRow(images: List<Any>, captions: List<String>) {
+fun ImageRow(images: List<String>, captions: List<String>) {
     LazyRow(modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(4.dp)) {
         items(images.size) { index ->

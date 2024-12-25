@@ -8,12 +8,12 @@ import retrofit2.http.Query
 interface OrderApi {
     @GET("cart/orders-user-active")
     suspend fun getActiveOrders(
-        @Query("user") restaurant: String,
-        @Query("status") category: String,
+        @Query("user") user: String,
+        @Query("status") status: String,
     ): Response<OrderResponse>
     @GET("cart/orders-user-active")
     suspend fun getCompletedOrders(
-        @Query("user") restaurant: String,
-        @Query("status") category: String,
+        @Query("user") user: String,
+        @Query("status") status: String,
     ): Response<OrderResponse>
 }
