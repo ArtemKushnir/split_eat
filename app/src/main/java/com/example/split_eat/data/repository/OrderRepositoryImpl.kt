@@ -40,5 +40,6 @@ class OrderRepositoryImpl @Inject constructor(private val orderApi: OrderApi) : 
                 response.errorBody()?.string() ?: "Неизвестная ошибка"
             )
         }
+
     }
 }

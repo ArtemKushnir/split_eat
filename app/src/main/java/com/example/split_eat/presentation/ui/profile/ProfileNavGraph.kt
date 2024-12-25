@@ -5,6 +5,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.example.split_eat.presentation.ui.profile.ProfileScreen
+import com.example.split_eat.presentation.ui.main.ProfileScreen
 
 fun NavGraphBuilder.profileGraph(navController: NavController) {
     navigation(startDestination = "profile/general", route = "profile") {
