@@ -178,7 +178,7 @@ fun OrderItem(order: Order) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(text = "Заказ #${order.id}", style = MaterialTheme.typography.titleMedium, color = Tomato)
             Text(text = order.restaurant, style = MaterialTheme.typography.titleMedium, color = Tomato)
-            Text(text = "Статус: ${order.status}", fontSize = 15.sp, color = Tomato)
+            Text(text = "Статус: ${getOrderStatusText(order)}", fontSize = 15.sp, color = Tomato)
             Text(text = "Стоимость заказа: ${order.total_price}", fontSize = 15.sp, color = Tomato)
             Spacer(modifier = Modifier.height(8.dp))
             ImageRow(
@@ -188,6 +188,17 @@ fun OrderItem(order: Order) {
         }
     }
 }
+
+fun getOrderStatusText(order: Order): String {
+    return if (order.status == true) {
+        "Найден созаказчик"
+    } else if (order.status == false) {
+        "Доставлен"
+    } else {
+        "Ищем созаказчика"
+    }
+}
+
 @Composable
 fun ProfileImage(){
     Image(
